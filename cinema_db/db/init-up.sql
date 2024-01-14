@@ -51,22 +51,22 @@ LANGUAGE PLPGSQL;
 
 CREATE TRIGGER hall_place_insert_trigger
             AFTER INSERT ON halls_configurations
-            EXECUTE FUNCTION update_size_on_hall();
+            EXECUTE FUNCTION update_hall_size();
 
 CREATE TRIGGER hall_place_delete_trigger
             AFTER DELETE ON halls_configurations
             FOR EACH ROW
-            EXECUTE FUNCTION update_size_on_hall();
+            EXECUTE FUNCTION update_hall_size();
 
 
-CREATE TABLE screenings_type (
+CREATE TABLE screenings_types (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL
 );
 
 CREATE TABLE screenings (
     id BIGSERIAL PRIMARY KEY,
-    screening_type_id INT REFERENCES screenings_type(id) ON UPDATE CASCADE ON DELETE SET NULL,
+    screening_type_id INT REFERENCES screenings_types(id) ON UPDATE CASCADE ON DELETE SET NULL,
     movie_id INT NOT NULL,
     start_time TIMESTAMPTZ NOT NULL CHECK(start_time > clock_timestamp()),
     hall_id INT REFERENCES halls(id) ON UPDATE CASCADE,
@@ -83,7 +83,7 @@ GRANT SELECT ON halls_types TO cinema_service;
 
 GRANT SELECT ON halls TO cinema_service;
 GRANT SELECT ON screenings TO cinema_service;
-GRANT SELECT ON screenings_type TO cinema_service;
+GRANT SELECT ON screenings_types TO cinema_service;
 
 
 

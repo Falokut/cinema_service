@@ -10,13 +10,13 @@ Your role would look like this:
 ```sql
 CREATE ROLE cinema_service WITH
     LOGIN
-    ENCRYPTED PASSWORD 'SCRAM-SHA-256$4096:R9TMUdvkUG5yxu0rJlO+hA==$E/WRNMfl6SWK9xreXN8rfIkJjpQhWO8pd+8t2kx12D0=:sCS47DCNVIZYhoue/BReTE0ZhVRXMGszsnnHexVwOU=';  -- Here your password for genres service
+    ENCRYPTED PASSWORD 'SCRAM-SHA-256$4096:R9TMUdvkUG5yxu0rJlO+hA==$E/WRNMfl6SWK9xreXN8rfIkJjpQhWO8pd+8t2kx12D0=:sCS47DCNVIZYhoue/BReTE0ZhVRXMGszsnnHexVwOU=';  -- Here your password for service
 ```
 or like this (passwords without encryption)
 ```sql
 CREATE ROLE cinema_service WITH
     LOGIN
-    PASSWORD 'YourPasswordForGenresService'; -- Here your password for genres service
+    PASSWORD 'YourPasswordForGenresService'; -- Here your password for service
 ```
 
 3. setup pgbouncer:
