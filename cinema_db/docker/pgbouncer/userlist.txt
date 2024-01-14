@@ -1,0 +1,3 @@
+"admin_cinema_service" "Falokut"
+"cinema_service" "Falokut"
+"postgres" "Falokut"

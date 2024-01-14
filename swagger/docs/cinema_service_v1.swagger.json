@@ -1,0 +1,496 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Cinema service",
+    "version": "1.0",
+    "contact": {
+      "name": "Falokut",
+      "url": "https://github.com/Falokut",
+      "email": "timur.sinelnik@yandex.ru"
+    }
+  },
+  "tags": [
+    {
+      "name": "cinemaServiceV1"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/cinema": {
+      "get": {
+        "operationId": "cinemaServiceV1_GetCinemasInCity",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/cinema_serviceCinemas"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "500": {
+            "description": "Something went wrong.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "city_id",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "cinemaServiceV1"
+        ]
+      }
+    },
+    "/v1/cities": {
+      "get": {
+        "operationId": "cinemaServiceV1_GetCinemasCities",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/cinema_serviceCities"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "500": {
+            "description": "Something went wrong.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "cinemaServiceV1"
+        ]
+      }
+    },
+    "/v1/halls/configuration": {
+      "get": {
+        "operationId": "cinemaServiceV1_GetHallConfiguration",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/cinema_serviceHallConfiguration"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "500": {
+            "description": "Something went wrong.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "hall_id",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "cinemaServiceV1"
+        ]
+      }
+    },
+    "/v1/screenings": {
+      "get": {
+        "operationId": "cinemaServiceV1_GetScreenings",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/cinema_serviceScreenings"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "500": {
+            "description": "Something went wrong.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cinema_id",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "movie_id",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "start_period.formatted_timestamp",
+            "description": "Time in format RFC3339, time must be in UTC\nexample: 2023-11-10T23:00:00Z",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "end_period.formatted_timestamp",
+            "description": "Time in format RFC3339, time must be in UTC\nexample: 2023-11-10T23:00:00Z",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "cinemaServiceV1"
+        ]
+      }
+    },
+    "/v1/screenings/preview": {
+      "get": {
+        "operationId": "cinemaServiceV1_GetPreviewScreenings",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/cinema_servicePreviewScreenings"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "500": {
+            "description": "Something went wrong.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cinema_id",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "start_period.formatted_timestamp",
+            "description": "Time in format RFC3339, time must be in UTC\nexample: 2023-11-10T23:00:00Z",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "end_period.formatted_timestamp",
+            "description": "Time in format RFC3339, time must be in UTC\nexample: 2023-11-10T23:00:00Z",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "cinemaServiceV1"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "cinema_serviceCinema": {
+      "type": "object",
+      "properties": {
+        "cinema_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "coordinates": {
+          "$ref": "#/definitions/cinema_serviceCoordinates"
+        }
+      }
+    },
+    "cinema_serviceCinemas": {
+      "type": "object",
+      "properties": {
+        "cinemas": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/cinema_serviceCinema"
+          }
+        }
+      }
+    },
+    "cinema_serviceCities": {
+      "type": "object",
+      "properties": {
+        "cities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/cinema_serviceCity"
+          }
+        }
+      }
+    },
+    "cinema_serviceCity": {
+      "type": "object",
+      "properties": {
+        "city_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "cinema_serviceCoordinates": {
+      "type": "object",
+      "properties": {
+        "latityde": {
+          "type": "number",
+          "format": "double"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "cinema_serviceDecimalValue": {
+      "type": "object",
+      "properties": {
+        "units": {
+          "type": "string",
+          "format": "int64",
+          "title": "Whole units part of the amount"
+        },
+        "nanos": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Nano units of the amount (10^-9)\nMust be same sign as units"
+        }
+      },
+      "title": "Example: 12345.6789 -\u003e { units = 12345, nanos = 678900000 }"
+    },
+    "cinema_serviceHallConfiguration": {
+      "type": "object",
+      "properties": {
+        "place": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/cinema_servicePlace"
+          }
+        }
+      }
+    },
+    "cinema_servicePlace": {
+      "type": "object",
+      "properties": {
+        "row": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "seat": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "gridPosX": {
+          "type": "number",
+          "format": "float"
+        },
+        "gridPosY": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "cinema_servicePreviewScreening": {
+      "type": "object",
+      "properties": {
+        "movie_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "screenings_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "halls_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "cinema_servicePreviewScreenings": {
+      "type": "object",
+      "properties": {
+        "screenings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/cinema_servicePreviewScreening"
+          }
+        }
+      },
+      "title": "Unique set of cinema screenings (unique by movie_id)"
+    },
+    "cinema_serviceScreening": {
+      "type": "object",
+      "properties": {
+        "screening_id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "movie_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "screening_type": {
+          "type": "string"
+        },
+        "start_time": {
+          "$ref": "#/definitions/cinema_serviceTimestamp"
+        },
+        "hall_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "ticket_price": {
+          "$ref": "#/definitions/cinema_serviceDecimalValue"
+        }
+      }
+    },
+    "cinema_serviceScreenings": {
+      "type": "object",
+      "properties": {
+        "screenings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/cinema_serviceScreening"
+          }
+        }
+      }
+    },
+    "cinema_serviceTimestamp": {
+      "type": "object",
+      "properties": {
+        "formatted_timestamp": {
+          "type": "string",
+          "title": "Time in format RFC3339, time must be in UTC\nexample: 2023-11-10T23:00:00Z"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

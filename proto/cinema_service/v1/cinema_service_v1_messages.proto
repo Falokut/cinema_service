@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package cinema_service;
+option go_package = "cinema_service/v1/protos";
+
+message Timestamp {
+  // Time in format RFC3339, time must be in UTC
+  // example: 2023-11-10T23:00:00Z
+  string formattedTimestamp = 1 [ json_name = "formatted_timestamp" ];
+}
+
+message GetPreviewScreeningsRequest {
+  int32 cinemaId = 1[json_name="cinema_id"];
+  Timestamp startPeriod = 2 [ json_name = "start_period" ];
+  Timestamp endPeriod = 3 [ json_name = "end_period" ];
+}
+
+// Example: 12345.6789 -> { units = 12345, nanos = 678900000 }
+message DecimalValue {
+  // Whole units part of the amount
+  int64 units = 1;
+
+  // Nano units of the amount (10^-9)
+  // Must be same sign as units
+  sfixed32 nanos = 2;
+}
+
+message PreviewScreening {
+  int32 movieID = 1 [ json_name = "movie_id" ];
+  repeated string screeningsTypes = 2 [ json_name = "screenings_types" ];
+  repeated string hallsTypes = 3 [ json_name = "halls_types" ];
+}
+
+// Unique set of cinema screenings (unique by movie_id)
+message PreviewScreenings { repeated PreviewScreening screenings = 1; }
+
+message GetScreeningsRequest {
+  int32 cinemaId = 1[json_name="cinema_id"];
+  int32 movieID = 2 [ json_name = "movie_id" ];
+  Timestamp startPeriod = 3 [ json_name = "start_period" ];
+  Timestamp endPeriod = 4 [ json_name = "end_period" ];
+}
+
+message Screening {
+  int64 screeningID = 1 [ json_name = "screening_id" ];
+  int32 MovieID = 2 [ json_name = "movie_id" ];
+  string screeningType = 3 [ json_name = "screening_type" ];
+  Timestamp startTime = 4 [ json_name = "start_time" ];
+  int32 hallID = 5 [ json_name = "hall_id" ];
+  DecimalValue ticketPrice = 6 [ json_name = "ticket_price" ];
+}
+
+message Screenings { repeated Screening screenings = 1; }
+
+message GetCinemasInCityRequest { int32 cityId = 1[json_name="city_id"]; }
+
+message Coordinates {
+  double latityde = 1;
+  double longitude = 2;
+}
+
+message Cinema {
+  int32 cinemaID = 1 [ json_name = "cinema_id" ];
+  string name = 2;
+  string address = 3;
+  Coordinates coordinates = 4;
+}
+
+message Cinemas { repeated Cinema cinemas = 1; }
+
+message City {
+  int32 cityID = 1 [ json_name = "city_id" ];
+  string name = 2;
+}
+
+message Cities { repeated City cities = 1; }
+
+message Hall {
+  int32 hallID = 1 [ json_name = "hall_id" ];
+  uint32 hallSize = 2 [ json_name = "hall_size" ];
+  string name = 3;
+  string type = 4;
+}
+
+message Halls { repeated Hall halls = 1; }
+
+message GetHallConfigurationRequest { int32 hallId = 1[json_name="hall_id"]; }
+
+message Place {
+  int32 row = 1;
+  int32 seat = 2;
+  float grid_pos_x = 3;
+  float grid_pos_y = 4;
+}
+
+message HallConfiguration { repeated Place place = 1; }

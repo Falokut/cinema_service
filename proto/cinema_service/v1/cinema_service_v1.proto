@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package cinema_service;
+import "cinema_service_v1_messages.proto";
+option go_package = "cinema_service/v1/protos";
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/protobuf/empty.proto";
+
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+    schemes: HTTP;
+    // schemes: HTTPS;
+    consumes: "application/json";
+    produces: "application/json";
+
+    info: {
+        title:
+            "Cinema service";
+        version:
+            "1.0";
+        contact: {
+        name:
+            "Falokut";
+        url:
+            "https://github.com/Falokut";
+        email:
+            "timur.sinelnik@yandex.ru";
+        };
+    }
+    responses: {
+        key:"404";
+        value: {
+            description: "Returned when the resource does not exist.";
+            schema: {
+                json_schema: {
+                    ref: "#/definitions/rpcStatus";
+                }
+            }
+        }
+    }
+    responses: {
+        key: "500";
+        value: {
+            description: "Something went wrong.";
+            schema: {
+                json_schema: {
+                    ref: "#/definitions/rpcStatus";
+                }
+            }
+        }
+    }
+};
+
+
+service cinemaServiceV1 {
+    rpc GetCinemasCities(google.protobuf.Empty) returns(Cities){
+        option (google.api.http) = {
+            get: "/v1/cities"
+        };
+    }
+
+    rpc GetCinemasInCity(GetCinemasInCityRequest) returns(Cinemas){
+        option (google.api.http) = {
+            get: "/v1/cinema"
+        };
+    }
+
+    rpc GetPreviewScreenings(GetPreviewScreeningsRequest) returns(PreviewScreenings){
+        option (google.api.http) = {
+            get: "/v1/screenings/preview"
+        };
+    }
+
+    rpc GetScreenings(GetScreeningsRequest) returns(Screenings){
+        option (google.api.http) = {
+            get: "/v1/screenings"
+        };
+    }
+
+    rpc GetHallConfiguration(GetHallConfigurationRequest) returns(HallConfiguration) {
+        option (google.api.http) = {
+            get: "/v1/halls/configuration"
+        };
+    }
+
+}
