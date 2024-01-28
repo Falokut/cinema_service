@@ -24,14 +24,15 @@
     "application/json"
   ],
   "paths": {
-    "/v1/cinema": {
+    "/v1/cinema/{cinema_id}/screenings": {
       "get": {
-        "operationId": "cinemaServiceV1_GetCinemasInCity",
+        "summary": "Returns all screenings for a movie in a specific cinema.",
+        "operationId": "cinemaServiceV1_GetScreenings",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/cinema_serviceCinemas"
+              "$ref": "#/definitions/cinema_serviceScreenings"
             }
           },
           "404": {
@@ -55,11 +56,90 @@
         },
         "parameters": [
           {
-            "name": "city_id",
+            "name": "cinema_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "movie_id",
             "in": "query",
             "required": false,
             "type": "integer",
             "format": "int32"
+          },
+          {
+            "name": "start_period.formatted_timestamp",
+            "description": "Time in format RFC3339, time must be in UTC\nexample: 2023-11-10T23:00:00Z",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "end_period.formatted_timestamp",
+            "description": "Time in format RFC3339, time must be in UTC\nexample: 2023-11-10T23:00:00Z",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "cinemaServiceV1"
+        ]
+      }
+    },
+    "/v1/cinema/{cinema_id}/screenings/movies": {
+      "get": {
+        "summary": "Returns all movies that are in the cinema screenings in a particular cinema.",
+        "operationId": "cinemaServiceV1_GetMoviesScreenings",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/cinema_servicePreviewScreenings"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "500": {
+            "description": "Something went wrong.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cinema_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "start_period.formatted_timestamp",
+            "description": "Time in format RFC3339, time must be in UTC\nexample: 2023-11-10T23:00:00Z",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "end_period.formatted_timestamp",
+            "description": "Time in format RFC3339, time must be in UTC\nexample: 2023-11-10T23:00:00Z",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -69,6 +149,7 @@
     },
     "/v1/cities": {
       "get": {
+        "summary": "Returns all cities where there are cinemas.",
         "operationId": "cinemaServiceV1_GetCinemasCities",
         "responses": {
           "200": {
@@ -101,8 +182,53 @@
         ]
       }
     },
-    "/v1/halls/configuration": {
+    "/v1/cities/{city_id}/cinemas": {
       "get": {
+        "summary": "Returns cinemas in the city.",
+        "operationId": "cinemaServiceV1_GetCinemasInCity",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/cinema_serviceCinemas"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "500": {
+            "description": "Something went wrong.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "city_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "cinemaServiceV1"
+        ]
+      }
+    },
+    "/v1/hall/configuration": {
+      "get": {
+        "summary": "Returns the configuration of the hall.",
         "operationId": "cinemaServiceV1_GetHallConfiguration",
         "responses": {
           "200": {
@@ -137,127 +263,6 @@
             "required": false,
             "type": "integer",
             "format": "int32"
-          }
-        ],
-        "tags": [
-          "cinemaServiceV1"
-        ]
-      }
-    },
-    "/v1/screenings": {
-      "get": {
-        "operationId": "cinemaServiceV1_GetScreenings",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/cinema_serviceScreenings"
-            }
-          },
-          "404": {
-            "description": "Returned when the resource does not exist.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          },
-          "500": {
-            "description": "Something went wrong.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "cinema_id",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "movie_id",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "start_period.formatted_timestamp",
-            "description": "Time in format RFC3339, time must be in UTC\nexample: 2023-11-10T23:00:00Z",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "end_period.formatted_timestamp",
-            "description": "Time in format RFC3339, time must be in UTC\nexample: 2023-11-10T23:00:00Z",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "cinemaServiceV1"
-        ]
-      }
-    },
-    "/v1/screenings/preview": {
-      "get": {
-        "operationId": "cinemaServiceV1_GetPreviewScreenings",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/cinema_servicePreviewScreenings"
-            }
-          },
-          "404": {
-            "description": "Returned when the resource does not exist.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          },
-          "500": {
-            "description": "Something went wrong.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "cinema_id",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "start_period.formatted_timestamp",
-            "description": "Time in format RFC3339, time must be in UTC\nexample: 2023-11-10T23:00:00Z",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "end_period.formatted_timestamp",
-            "description": "Time in format RFC3339, time must be in UTC\nexample: 2023-11-10T23:00:00Z",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [

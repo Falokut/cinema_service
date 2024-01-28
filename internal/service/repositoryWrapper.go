@@ -89,13 +89,13 @@ func convertToCinemas(cinemas []repository.Cinema) *cinema_service.Cinemas {
 	return res
 }
 
-func (w *cinemaRepositoryWrapper) GetPreviewScreenings(ctx context.Context, cinemaID int32,
+func (w *cinemaRepositoryWrapper) GetMoviesScreenings(ctx context.Context, cinemaID int32,
 	startPeriod, endPeriod time.Time) (*cinema_service.PreviewScreenings, error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx,
-		"cinemaRepositoryWrapper.GetPreviewScreenings")
+		"cinemaRepositoryWrapper.GetMoviesScreenings")
 	defer span.Finish()
 
-	previews, err := w.repo.GetPreviewScreenings(ctx, cinemaID, startPeriod, endPeriod)
+	previews, err := w.repo.GetMoviesScreenings(ctx, cinemaID, startPeriod, endPeriod)
 	if err != nil {
 		return nil, w.createErrorResponceWithSpan(span, ErrInternal, err.Error())
 	}

@@ -60,7 +60,7 @@ type City struct {
 	Name string `json:"name" db:"name"`
 }
 
-type PreviewScreening struct {
+type MoviesScreenings struct {
 	MovieID         int32    `json:"movie_id" db:"movie_id"`
 	ScreeningsTypes []string `json:"screenings_types" db:"screenings_types"`
 	HallsTypes      []string `json:"halls_types" db:"halls_types"`
@@ -83,16 +83,30 @@ type Place struct {
 }
 
 type CinemaRepository interface {
+	// Returns cinemas in the city.
 	GetCinemasInCity(ctx context.Context, id int32) ([]Cinema, error)
+
+	// Returns all cities where there are cinemas.
 	GetCinemasCities(ctx context.Context) ([]City, error)
-	GetPreviewScreenings(ctx context.Context, cinemaID int32, startPeriod, endPeriod time.Time) ([]PreviewScreening, error)
+
+	// Returns all movies that are in the cinema screenings in a particular cinema.
+	GetMoviesScreenings(ctx context.Context, cinemaID int32, startPeriod, endPeriod time.Time) ([]MoviesScreenings, error)
+
+	//Returns all screenings for a movie in a specific cinema.
 	GetScreenings(ctx context.Context, cinemaID, movieID int32, startPeriod, endPeriod time.Time) ([]Screening, error)
+
+	// Returns the configuration of the hall.
 	GetHallConfiguraion(ctx context.Context, id int32) ([]Place, error)
 }
 
 type CinemaCache interface {
+	// Returns cinemas in the city.
 	GetCinemasInCity(ctx context.Context, id int32) ([]Cinema, error)
+
+	// Returns all cities where there are cinemas.
 	GetCinemasCities(ctx context.Context) ([]City, error)
+
+	// Returns the configuration of the hall.
 	GetHallConfiguraion(ctx context.Context, id int32) ([]Place, error)
 
 	CacheCinemasInCity(ctx context.Context, id int32, cinemas []Cinema, ttl time.Duration) error

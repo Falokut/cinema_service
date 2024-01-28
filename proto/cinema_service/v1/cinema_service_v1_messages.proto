@@ -9,7 +9,7 @@ message Timestamp {
   string formattedTimestamp = 1 [ json_name = "formatted_timestamp" ];
 }
 
-message GetPreviewScreeningsRequest {
+message GetMoviesScreeningsRequest {
   int32 cinemaId = 1[json_name="cinema_id"];
   Timestamp startPeriod = 2 [ json_name = "start_period" ];
   Timestamp endPeriod = 3 [ json_name = "end_period" ];
@@ -94,3 +94,7 @@ message Place {
 }
 
 message HallConfiguration { repeated Place place = 1; }
+
+message GetCinemaHalls {
+  int32 CinemaId = 1[json_name="cinema_id"];
+}

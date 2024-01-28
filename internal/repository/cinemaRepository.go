@@ -81,9 +81,9 @@ type previewScreening struct {
 	HallsTypes      string `json:"halls_types" db:"halls_types"`
 }
 
-func (r *cinemaRepository) GetPreviewScreenings(ctx context.Context,
-	cinemaID int32, startPeriod, endPeriod time.Time) ([]PreviewScreening, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaRepository.GetPreviewScreenings")
+func (r *cinemaRepository) GetMoviesScreenings(ctx context.Context,
+	cinemaID int32, startPeriod, endPeriod time.Time) ([]MoviesScreenings, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaRepository.GetMoviesScreenings")
 	defer span.Finish()
 	var err error
 	defer span.SetTag("error", err != nil)
@@ -100,12 +100,12 @@ func (r *cinemaRepository) GetPreviewScreenings(ctx context.Context,
 	err = r.db.SelectContext(ctx, &previews, query, cinemaID, startPeriod, endPeriod)
 	if err != nil {
 		r.logger.Errorf("err: %v query: %s", err.Error(), query)
-		return []PreviewScreening{}, err
+		return []MoviesScreenings{}, err
 	}
 
-	res := make([]PreviewScreening, len(previews))
+	res := make([]MoviesScreenings, len(previews))
 	for i, screening := range previews {
-		res[i] = PreviewScreening{
+		res[i] = MoviesScreenings{
 			MovieID:         screening.MovieID,
 			HallsTypes:      convertSQLArray(screening.HallsTypes),
 			ScreeningsTypes: convertSQLArray(screening.ScreeningsTypes),

@@ -16,7 +16,8 @@ import (
 
 type CinemaRepository interface {
 	GetCinemasInCity(ctx context.Context, id int32) (*cinema_service.Cinemas, error)
-	GetPreviewScreenings(ctx context.Context, cinemaID int32,
+
+	GetMoviesScreenings(ctx context.Context, cinemaID int32,
 		startPeriod, endPeriod time.Time) (*cinema_service.PreviewScreenings, error)
 	GetScreenings(ctx context.Context, cinemaID, movieID int32,
 		startPeriod, endPeriod time.Time) (*cinema_service.Screenings, error)
@@ -52,16 +53,16 @@ func (s *cinemaService) GetCinemasInCity(ctx context.Context,
 	return res, nil
 }
 
-func (s *cinemaService) GetPreviewScreenings(ctx context.Context,
-	in *cinema_service.GetPreviewScreeningsRequest) (*cinema_service.PreviewScreenings, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaService.GetPreviewScreenings")
+func (s *cinemaService) GetMoviesScreenings(ctx context.Context,
+	in *cinema_service.GetMoviesScreeningsRequest) (*cinema_service.PreviewScreenings, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaService.GetMoviesScreenings")
 	defer span.Finish()
 
 	start, end, err := parsePeriods(in.StartPeriod.FormattedTimestamp, in.EndPeriod.FormattedTimestamp)
 	if err != nil {
 		return nil, s.errorHandler.createErrorResponceWithSpan(span, ErrInvalidArgument, err.Error())
 	}
-	res, err := s.cinemaRepo.GetPreviewScreenings(ctx, in.CinemaId, start, end)
+	res, err := s.cinemaRepo.GetMoviesScreenings(ctx, in.CinemaId, start, end)
 	if err != nil {
 		ext.LogError(span, err)
 		span.SetTag("grpc.status", status.Code(err))

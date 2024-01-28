@@ -55,33 +55,36 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 
 
 service cinemaServiceV1 {
+    // Returns all cities where there are cinemas.
     rpc GetCinemasCities(google.protobuf.Empty) returns(Cities){
         option (google.api.http) = {
             get: "/v1/cities"
         };
     }
 
+    // Returns cinemas in the city.
     rpc GetCinemasInCity(GetCinemasInCityRequest) returns(Cinemas){
         option (google.api.http) = {
-            get: "/v1/cinema"
+            get: "/v1/cities/{cityId}/cinemas"
         };
     }
-
-    rpc GetPreviewScreenings(GetPreviewScreeningsRequest) returns(PreviewScreenings){
+    // Returns all movies that are in the cinema screenings in a particular cinema.
+    rpc GetMoviesScreenings(GetMoviesScreeningsRequest) returns(PreviewScreenings){
         option (google.api.http) = {
-            get: "/v1/screenings/preview"
+            get: "/v1/cinema/{cinemaId}/screenings/movies"
         };
     }
 
+    //Returns all screenings for a movie in a specific cinema.
     rpc GetScreenings(GetScreeningsRequest) returns(Screenings){
         option (google.api.http) = {
-            get: "/v1/screenings"
+            get: "/v1/cinema/{cinemaId}/screenings"
         };
     }
-
+    // Returns the configuration of the hall.
     rpc GetHallConfiguration(GetHallConfigurationRequest) returns(HallConfiguration) {
         option (google.api.http) = {
-            get: "/v1/halls/configuration"
+            get: "/v1/hall/configuration"
         };
     }
 

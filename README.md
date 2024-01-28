@@ -2,7 +2,6 @@
 
 + [Configuration](#configuration)
     + [Params info](#configuration-params-info)
-        + [Kafka reader config](#kafka-reader-config)
         + [time.Duration](#timeduration-yaml-supported-values)
         + [Database config](#database-config)
         + [Jaeger config](#jaeger-config)
