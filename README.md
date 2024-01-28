@@ -91,7 +91,7 @@ A Duration value can be expressed in various formats, such as in seconds, minute
 The service uses Prometheus and Jaeger and supports distribution tracing
 
 # Docs
-[Swagger docs](swagger/docs/movies_service_v1.swagger.json)
+[Swagger docs](swagger/docs/cinema_service_v1.swagger.json)
 
 # Author
 
