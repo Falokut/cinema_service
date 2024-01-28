@@ -84,7 +84,7 @@ service cinemaServiceV1 {
     // Returns the configuration of the hall.
     rpc GetHallConfiguration(GetHallConfigurationRequest) returns(HallConfiguration) {
         option (google.api.http) = {
-            get: "/v1/hall/configuration"
+            get: "/v1/hall/{hallId}/configuration"
         };
     }
 

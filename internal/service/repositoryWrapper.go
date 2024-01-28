@@ -140,7 +140,7 @@ func (w *cinemaRepositoryWrapper) GetScreenings(ctx context.Context, cinemaID, m
 			MovieID:       screening.MovieID,
 			HallID:        screening.HallID,
 			StartTime:     &cinema_service.Timestamp{FormattedTimestamp: screening.StartTime.Format(time.RFC3339)},
-			TicketPrice:   decimalFromFloat(screening.TicketPrice),
+			TicketPrice:   priceFromFloat(screening.TicketPrice),
 		}
 	}
 
@@ -229,15 +229,13 @@ func convertToHallConfiguration(places []repository.Place) *cinema_service.HallC
 	}
 	return res
 }
-func decimalFromFloat(n string) *cinema_service.DecimalValue {
+
+func priceFromFloat(n string) *cinema_service.Price {
 	nums := strings.Split(n, ".")
 	if len(nums) != 2 {
 		return nil
 	}
 	units, _ := strconv.ParseInt(nums[0], 10, 64)
 	nanos, _ := strconv.ParseInt(nums[1], 10, 32)
-	return &cinema_service.DecimalValue{
-		Units: units,
-		Nanos: int32(nanos),
-	}
+	return &cinema_service.Price{Value: int32(units)*100 + int32(nanos)}
 }

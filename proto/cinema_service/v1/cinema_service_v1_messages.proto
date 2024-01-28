@@ -15,15 +15,11 @@ message GetMoviesScreeningsRequest {
   Timestamp endPeriod = 3 [ json_name = "end_period" ];
 }
 
-// Example: 12345.6789 -> { units = 12345, nanos = 678900000 }
-message DecimalValue {
-  // Whole units part of the amount
-  int64 units = 1;
-
-  // Nano units of the amount (10^-9)
-  // Must be same sign as units
-  sfixed32 nanos = 2;
+message Price {
+  // The price value in minimum currency units, for example 10010, is 100$ and 10 penny
+  int32 value = 1;
 }
+
 
 message PreviewScreening {
   int32 movieID = 1 [ json_name = "movie_id" ];
@@ -47,7 +43,7 @@ message Screening {
   string screeningType = 3 [ json_name = "screening_type" ];
   Timestamp startTime = 4 [ json_name = "start_time" ];
   int32 hallID = 5 [ json_name = "hall_id" ];
-  DecimalValue ticketPrice = 6 [ json_name = "ticket_price" ];
+  Price ticketPrice = 6 [ json_name = "ticket_price" ];
 }
 
 message Screenings { repeated Screening screenings = 1; }

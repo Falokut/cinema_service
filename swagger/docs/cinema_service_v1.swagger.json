@@ -226,7 +226,7 @@
         ]
       }
     },
-    "/v1/hall/configuration": {
+    "/v1/hall/{hall_id}/configuration": {
       "get": {
         "summary": "Returns the configuration of the hall.",
         "operationId": "cinemaServiceV1_GetHallConfiguration",
@@ -259,8 +259,8 @@
         "parameters": [
           {
             "name": "hall_id",
-            "in": "query",
-            "required": false,
+            "in": "path",
+            "required": true,
             "type": "integer",
             "format": "int32"
           }
@@ -339,22 +339,6 @@
         }
       }
     },
-    "cinema_serviceDecimalValue": {
-      "type": "object",
-      "properties": {
-        "units": {
-          "type": "string",
-          "format": "int64",
-          "title": "Whole units part of the amount"
-        },
-        "nanos": {
-          "type": "integer",
-          "format": "int32",
-          "title": "Nano units of the amount (10^-9)\nMust be same sign as units"
-        }
-      },
-      "title": "Example: 12345.6789 -\u003e { units = 12345, nanos = 678900000 }"
-    },
     "cinema_serviceHallConfiguration": {
       "type": "object",
       "properties": {
@@ -422,6 +406,16 @@
       },
       "title": "Unique set of cinema screenings (unique by movie_id)"
     },
+    "cinema_servicePrice": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "integer",
+          "format": "int32",
+          "title": "The price value in minimum currency units, for example 10010, is 100$ and 10 penny"
+        }
+      }
+    },
     "cinema_serviceScreening": {
       "type": "object",
       "properties": {
@@ -444,7 +438,7 @@
           "format": "int32"
         },
         "ticket_price": {
-          "$ref": "#/definitions/cinema_serviceDecimalValue"
+          "$ref": "#/definitions/cinema_servicePrice"
         }
       }
     },
