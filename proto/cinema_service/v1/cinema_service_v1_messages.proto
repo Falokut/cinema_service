@@ -15,6 +15,13 @@ message GetMoviesScreeningsRequest {
   Timestamp endPeriod = 3 [ json_name = "end_period" ];
 }
 
+message GetMoviesScreeningsInCitiesRequest{
+  // cities ids empty, returns all screenings without city id matching, for multiple values use ',' as separator
+  optional string citiesIds = 1[json_name="cities_ids"];
+  Timestamp startPeriod = 2 [ json_name = "start_period" ];
+  Timestamp endPeriod = 3 [ json_name = "end_period" ];
+}
+
 message Price {
   // The price value in minimum currency units, for example 10010, is 100$ and 10 penny
   int32 value = 1;

@@ -49,10 +49,12 @@ func main() {
 		return
 	}
 
+	shutdown := make(chan error, 1)
 	go func() {
 		logger.Info("Metrics server running")
 		if err := metrics.RunMetricServer(cfg.PrometheusConfig.ServerConfig); err != nil {
 			logger.Errorf("Shutting down, error while running metrics server %v", err)
+			shutdown <- err
 			return
 		}
 	}()
@@ -107,6 +109,7 @@ func main() {
 			[]healthcheck.HealthcheckResource{cinemaDB, cinemaCache}, cfg.HealthcheckPort, nil)
 		if err := healthcheckManager.RunHealthcheckEndpoint(); err != nil {
 			logger.Error(err)
+			shutdown <- err
 			return
 		}
 	}()
@@ -120,13 +123,26 @@ func main() {
 		}, metric)
 
 	service := service.NewCinemaService(logger.Logger, repository)
+	logger.Info("Server initializing")
 	s := server.NewServer(logger.Logger, service)
-	s.Run(getListenServerConfig(cfg), metric, nil, nil)
+	go func() {
+		if err := s.Run(getListenServerConfig(cfg), metric, nil, nil); err != nil {
+			logger.Errorf("Shutting down, error while running server %s", err.Error())
+			shutdown <- err
+			return
+		}
+	}()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGHUP, syscall.SIGTERM)
 
-	<-quit
+	select {
+	case <-quit:
+		break
+	case <-shutdown:
+		break
+	}
+
 	s.Shutdown()
 }
 

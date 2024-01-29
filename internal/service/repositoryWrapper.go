@@ -103,6 +103,45 @@ func (w *cinemaRepositoryWrapper) GetMoviesScreenings(ctx context.Context, cinem
 		return nil, w.createErrorResponceWithSpan(span, ErrNotFound, "")
 	}
 
+	return convertMoviesScreeningsToProto(previews), nil
+}
+
+func (w *cinemaRepositoryWrapper) GetAllMoviesScreenings(ctx context.Context,
+	startPeriod, endPeriod time.Time) (*cinema_service.PreviewScreenings, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx,
+		"cinemaRepositoryWrapper.GetAllMoviesScreenings")
+	defer span.Finish()
+
+	previews, err := w.repo.GetAllMoviesScreenings(ctx, startPeriod, endPeriod)
+	if err != nil {
+		return nil, w.createErrorResponceWithSpan(span, ErrInternal, err.Error())
+	}
+	if len(previews) == 0 {
+		return nil, w.createErrorResponceWithSpan(span, ErrNotFound, "")
+	}
+
+	return convertMoviesScreeningsToProto(previews), nil
+}
+
+func (w *cinemaRepositoryWrapper) GetMoviesScreeningsInCities(ctx context.Context, citiesIds []int32,
+	startPeriod, endPeriod time.Time) (*cinema_service.PreviewScreenings, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx,
+		"cinemaRepositoryWrapper.GetMoviesScreeningsInCities")
+	defer span.Finish()
+
+	previews, err := w.repo.GetMoviesScreeningsInCities(ctx, citiesIds,
+		startPeriod, endPeriod)
+	if err != nil {
+		return nil, w.createErrorResponceWithSpan(span, ErrInternal, err.Error())
+	}
+	if len(previews) == 0 {
+		return nil, w.createErrorResponceWithSpan(span, ErrNotFound, "")
+	}
+
+	return convertMoviesScreeningsToProto(previews), nil
+}
+
+func convertMoviesScreeningsToProto(previews []repository.MoviesScreenings) *cinema_service.PreviewScreenings {
 	res := &cinema_service.PreviewScreenings{}
 	res.Screenings = make([]*cinema_service.PreviewScreening, len(previews))
 	for i, preview := range previews {
@@ -112,8 +151,7 @@ func (w *cinemaRepositoryWrapper) GetMoviesScreenings(ctx context.Context, cinem
 			HallsTypes:      preview.HallsTypes,
 		}
 	}
-
-	return res, nil
+	return res
 }
 
 func (w *cinemaRepositoryWrapper) GetScreenings(ctx context.Context, cinemaID, movieID int32,

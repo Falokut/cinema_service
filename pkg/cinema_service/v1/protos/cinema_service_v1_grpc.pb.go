@@ -29,6 +29,8 @@ type CinemaServiceV1Client interface {
 	GetCinemasInCity(ctx context.Context, in *GetCinemasInCityRequest, opts ...grpc.CallOption) (*Cinemas, error)
 	// Returns all movies that are in the cinema screenings in a particular cinema.
 	GetMoviesScreenings(ctx context.Context, in *GetMoviesScreeningsRequest, opts ...grpc.CallOption) (*PreviewScreenings, error)
+	// Returns all movies screenings in the cinema screenings in specified cities, or in all cities,if not specified.
+	GetMoviesScreeningsInCities(ctx context.Context, in *GetMoviesScreeningsInCitiesRequest, opts ...grpc.CallOption) (*PreviewScreenings, error)
 	// Returns all screenings for a movie in a specific cinema.
 	GetScreenings(ctx context.Context, in *GetScreeningsRequest, opts ...grpc.CallOption) (*Screenings, error)
 	// Returns the configuration of the hall.
@@ -70,6 +72,15 @@ func (c *cinemaServiceV1Client) GetMoviesScreenings(ctx context.Context, in *Get
 	return out, nil
 }
 
+func (c *cinemaServiceV1Client) GetMoviesScreeningsInCities(ctx context.Context, in *GetMoviesScreeningsInCitiesRequest, opts ...grpc.CallOption) (*PreviewScreenings, error) {
+	out := new(PreviewScreenings)
+	err := c.cc.Invoke(ctx, "/cinema_service.cinemaServiceV1/GetMoviesScreeningsInCities", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cinemaServiceV1Client) GetScreenings(ctx context.Context, in *GetScreeningsRequest, opts ...grpc.CallOption) (*Screenings, error) {
 	out := new(Screenings)
 	err := c.cc.Invoke(ctx, "/cinema_service.cinemaServiceV1/GetScreenings", in, out, opts...)
@@ -98,6 +109,8 @@ type CinemaServiceV1Server interface {
 	GetCinemasInCity(context.Context, *GetCinemasInCityRequest) (*Cinemas, error)
 	// Returns all movies that are in the cinema screenings in a particular cinema.
 	GetMoviesScreenings(context.Context, *GetMoviesScreeningsRequest) (*PreviewScreenings, error)
+	// Returns all movies screenings in the cinema screenings in specified cities, or in all cities,if not specified.
+	GetMoviesScreeningsInCities(context.Context, *GetMoviesScreeningsInCitiesRequest) (*PreviewScreenings, error)
 	// Returns all screenings for a movie in a specific cinema.
 	GetScreenings(context.Context, *GetScreeningsRequest) (*Screenings, error)
 	// Returns the configuration of the hall.
@@ -117,6 +130,9 @@ func (UnimplementedCinemaServiceV1Server) GetCinemasInCity(context.Context, *Get
 }
 func (UnimplementedCinemaServiceV1Server) GetMoviesScreenings(context.Context, *GetMoviesScreeningsRequest) (*PreviewScreenings, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMoviesScreenings not implemented")
+}
+func (UnimplementedCinemaServiceV1Server) GetMoviesScreeningsInCities(context.Context, *GetMoviesScreeningsInCitiesRequest) (*PreviewScreenings, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMoviesScreeningsInCities not implemented")
 }
 func (UnimplementedCinemaServiceV1Server) GetScreenings(context.Context, *GetScreeningsRequest) (*Screenings, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetScreenings not implemented")
@@ -191,6 +207,24 @@ func _CinemaServiceV1_GetMoviesScreenings_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CinemaServiceV1_GetMoviesScreeningsInCities_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMoviesScreeningsInCitiesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CinemaServiceV1Server).GetMoviesScreeningsInCities(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cinema_service.cinemaServiceV1/GetMoviesScreeningsInCities",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CinemaServiceV1Server).GetMoviesScreeningsInCities(ctx, req.(*GetMoviesScreeningsInCitiesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CinemaServiceV1_GetScreenings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetScreeningsRequest)
 	if err := dec(in); err != nil {
@@ -245,6 +279,10 @@ var CinemaServiceV1_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetMoviesScreenings",
 			Handler:    _CinemaServiceV1_GetMoviesScreenings_Handler,
+		},
+		{
+			MethodName: "GetMoviesScreeningsInCities",
+			Handler:    _CinemaServiceV1_GetMoviesScreeningsInCities_Handler,
 		},
 		{
 			MethodName: "GetScreenings",

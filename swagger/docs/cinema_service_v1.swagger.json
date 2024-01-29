@@ -269,6 +269,64 @@
           "cinemaServiceV1"
         ]
       }
+    },
+    "/v1/screenings/movies": {
+      "get": {
+        "summary": "Returns all movies screenings in the cinema screenings in specified cities, or in all cities,if not specified.",
+        "operationId": "cinemaServiceV1_GetMoviesScreeningsInCities",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/cinema_servicePreviewScreenings"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "500": {
+            "description": "Something went wrong.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cities_ids",
+            "description": "cities ids empty, returns all screenings without city id matching, for multiple values use ',' as separator",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "start_period.formatted_timestamp",
+            "description": "Time in format RFC3339, time must be in UTC\nexample: 2023-11-10T23:00:00Z",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "end_period.formatted_timestamp",
+            "description": "Time in format RFC3339, time must be in UTC\nexample: 2023-11-10T23:00:00Z",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "cinemaServiceV1"
+        ]
+      }
     }
   },
   "definitions": {

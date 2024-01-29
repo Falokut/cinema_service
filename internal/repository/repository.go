@@ -92,6 +92,12 @@ type CinemaRepository interface {
 	// Returns all movies that are in the cinema screenings in a particular cinema.
 	GetMoviesScreenings(ctx context.Context, cinemaID int32, startPeriod, endPeriod time.Time) ([]MoviesScreenings, error)
 
+	// Returns all movies that are in the cinema screenings.
+	GetAllMoviesScreenings(ctx context.Context, startPeriod, endPeriod time.Time) ([]MoviesScreenings, error)
+
+	// Returns all movies that are in the cinema screenings in particular cities.
+	GetMoviesScreeningsInCities(ctx context.Context, citiesIds []int32, startPeriod, endPeriod time.Time) ([]MoviesScreenings, error)
+
 	//Returns all screenings for a movie in a specific cinema.
 	GetScreenings(ctx context.Context, cinemaID, movieID int32, startPeriod, endPeriod time.Time) ([]Screening, error)
 

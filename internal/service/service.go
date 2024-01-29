@@ -3,6 +3,9 @@ package service
 import (
 	"context"
 	"fmt"
+	"regexp"
+	"strconv"
+	"strings"
 	"time"
 
 	cinema_service "github.com/Falokut/cinema_service/pkg/cinema_service/v1/protos"
@@ -17,6 +20,9 @@ import (
 type CinemaRepository interface {
 	GetCinemasInCity(ctx context.Context, id int32) (*cinema_service.Cinemas, error)
 
+	GetAllMoviesScreenings(ctx context.Context, startPeriod, endPeriod time.Time) (*cinema_service.PreviewScreenings, error)
+	GetMoviesScreeningsInCities(ctx context.Context, citiesIds []int32,
+		startPeriod, endPeriod time.Time) (*cinema_service.PreviewScreenings, error)
 	GetMoviesScreenings(ctx context.Context, cinemaID int32,
 		startPeriod, endPeriod time.Time) (*cinema_service.PreviewScreenings, error)
 	GetScreenings(ctx context.Context, cinemaID, movieID int32,
@@ -58,7 +64,7 @@ func (s *cinemaService) GetMoviesScreenings(ctx context.Context,
 	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaService.GetMoviesScreenings")
 	defer span.Finish()
 
-	start, end, err := parsePeriods(in.StartPeriod.FormattedTimestamp, in.EndPeriod.FormattedTimestamp)
+	start, end, err := parsePeriods(in.StartPeriod, in.EndPeriod)
 	if err != nil {
 		return nil, s.errorHandler.createErrorResponceWithSpan(span, ErrInvalidArgument, err.Error())
 	}
@@ -73,11 +79,53 @@ func (s *cinemaService) GetMoviesScreenings(ctx context.Context,
 	return res, nil
 }
 
+func (s *cinemaService) GetMoviesScreeningsInCities(ctx context.Context,
+	in *cinema_service.GetMoviesScreeningsInCitiesRequest) (*cinema_service.PreviewScreenings, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaService.GetMoviesScreeningsInCities")
+	defer span.Finish()
+
+	start, end, err := parsePeriods(in.StartPeriod, in.EndPeriod)
+	if err != nil {
+		return nil, s.errorHandler.createErrorResponceWithSpan(span, ErrInvalidArgument, err.Error())
+	}
+
+	var res *cinema_service.PreviewScreenings
+	if in.CitiesIds == nil {
+		res, err = s.cinemaRepo.GetAllMoviesScreenings(ctx, start, end)
+	} else {
+		if err := checkIds(in.GetCitiesIds()); err != nil {
+			return nil, s.errorHandler.createErrorResponceWithSpan(span, ErrInvalidArgument, "invalid ")
+		}
+		ids := convertStringsSlice(strings.Split(in.GetCitiesIds(), ","))
+		res, err = s.cinemaRepo.GetMoviesScreeningsInCities(ctx, ids, start, end)
+	}
+
+	if err != nil {
+		ext.LogError(span, err)
+		span.SetTag("grpc.status", status.Code(err))
+		return nil, err
+	}
+
+	span.SetTag("grpc.status", codes.OK)
+	return res, nil
+}
+
+func convertStringsSlice(str []string) []int32 {
+	var nums = make([]int32, 0, len(str))
+	for _, s := range str {
+		num, err := strconv.Atoi(s)
+		if err == nil {
+			nums = append(nums, int32(num))
+		}
+	}
+	return nums
+}
+
 func (s *cinemaService) GetScreenings(ctx context.Context,
 	in *cinema_service.GetScreeningsRequest) (*cinema_service.Screenings, error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaService.GetScreenings")
 	defer span.Finish()
-	start, end, err := parsePeriods(in.StartPeriod.FormattedTimestamp, in.EndPeriod.FormattedTimestamp)
+	start, end, err := parsePeriods(in.StartPeriod, in.EndPeriod)
 	if err != nil {
 		return nil, s.errorHandler.createErrorResponceWithSpan(span, ErrInvalidArgument, err.Error())
 	}
@@ -122,17 +170,31 @@ func (s *cinemaService) GetHallConfiguration(ctx context.Context,
 	return res, nil
 }
 
-func parsePeriods(startPeriod, endPeriod string) (start time.Time, end time.Time, err error) {
-	start, err = time.Parse(time.RFC3339, startPeriod)
+func parsePeriods(startPeriod, endPeriod *cinema_service.Timestamp) (start time.Time, end time.Time, err error) {
+	if startPeriod == nil || endPeriod == nil {
+		err = fmt.Errorf("invalid period value, it mustn't be empty")
+		return
+	}
+	start, err = time.Parse(time.RFC3339, startPeriod.FormattedTimestamp)
 	if err != nil {
 		err = fmt.Errorf("invalid start period value, it must be RFC3339 layout value: %s", startPeriod)
 		return
 	}
-	end, err = time.Parse(time.RFC3339, endPeriod)
+	end, err = time.Parse(time.RFC3339, endPeriod.FormattedTimestamp)
 	if err != nil {
 		err = fmt.Errorf("invalid start period value, it must be RFC3339 layout value: %s", endPeriod)
 		return
 	}
 
 	return
+}
+
+func checkIds(val string) error {
+	exp := regexp.MustCompile("^[!-&!+,0-9]+$")
+
+	if !exp.Match([]byte(val)) {
+		return ErrInvalidArgument
+	}
+
+	return nil
 }

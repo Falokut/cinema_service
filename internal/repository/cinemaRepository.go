@@ -115,6 +115,75 @@ func (r *cinemaRepository) GetMoviesScreenings(ctx context.Context,
 	return res, nil
 }
 
+func (r *cinemaRepository) GetAllMoviesScreenings(ctx context.Context,
+	startPeriod, endPeriod time.Time) ([]MoviesScreenings, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx,
+		"cinemaRepository.GetAllMoviesScreenings")
+	defer span.Finish()
+	var err error
+	defer span.SetTag("error", err != nil)
+
+	query := fmt.Sprintf(`SELECT movie_id, ARRAY_AGG(DISTINCT %[1]s.name) AS screenings_types,
+		ARRAY_AGG(DISTINCT %[2]s.name) AS halls_types 
+		FROM %[3]s JOIN %[1]s ON screening_type_id=%[1]s.id 
+		JOIN %[4]s ON hall_id=%[4]s.id JOIN %[2]s ON hall_type_id=%[2]s.type_id 
+		WHERE start_time>=$1 AND start_time<=$2 
+		GROUP BY movie_id`,
+		screeningTypeTableName, hallsTypesTableName, screeningsTableName, hallsTableName)
+
+	var previews []previewScreening
+	err = r.db.SelectContext(ctx, &previews, query, startPeriod, endPeriod)
+	if err != nil {
+		r.logger.Errorf("err: %v query: %s", err.Error(), query)
+		return []MoviesScreenings{}, err
+	}
+
+	res := make([]MoviesScreenings, len(previews))
+	for i, screening := range previews {
+		res[i] = MoviesScreenings{
+			MovieID:         screening.MovieID,
+			HallsTypes:      convertSQLArray(screening.HallsTypes),
+			ScreeningsTypes: convertSQLArray(screening.ScreeningsTypes),
+		}
+	}
+
+	return res, nil
+}
+
+func (r *cinemaRepository) GetMoviesScreeningsInCities(ctx context.Context,
+	citiesIds []int32, startPeriod, endPeriod time.Time) ([]MoviesScreenings, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx,
+		"cinemaRepository.GetMoviesScreeningsInCities")
+	defer span.Finish()
+	var err error
+	defer span.SetTag("error", err != nil)
+
+	query := fmt.Sprintf(`SELECT movie_id, ARRAY_AGG(DISTINCT %[1]s.name) AS screenings_types,
+		ARRAY_AGG(DISTINCT %[2]s.name) AS halls_types 
+		FROM %[3]s JOIN %[1]s ON screening_type_id=%[1]s.id 
+		JOIN %[4]s ON hall_id=%[4]s.id JOIN %[2]s ON hall_type_id=%[2]s.type_id 
+		WHERE cinema_id=ANY(SELECT id FROM %[5]s WHERE city_id=ANY($1)) AND start_time>=$2 AND start_time<=$3 
+		GROUP BY movie_id`,
+		screeningTypeTableName, hallsTypesTableName, screeningsTableName, hallsTableName, cinemasTableName)
+
+	var previews []previewScreening
+	err = r.db.SelectContext(ctx, &previews, query, citiesIds, startPeriod, endPeriod)
+	if err != nil {
+		r.logger.Errorf("err: %v query: %s", err.Error(), query)
+		return []MoviesScreenings{}, err
+	}
+
+	res := make([]MoviesScreenings, len(previews))
+	for i, screening := range previews {
+		res[i] = MoviesScreenings{
+			MovieID:         screening.MovieID,
+			HallsTypes:      convertSQLArray(screening.HallsTypes),
+			ScreeningsTypes: convertSQLArray(screening.ScreeningsTypes),
+		}
+	}
+
+	return res, nil
+}
 func (r *cinemaRepository) GetScreenings(ctx context.Context,
 	cinemaID, movieID int32, startPeriod, endPeriod time.Time) ([]Screening, error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaRepository.GetScreenings")
