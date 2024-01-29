@@ -35,7 +35,8 @@ func main() {
 
 	tracer, closer, err := jaegerTracer.InitJaeger(cfg.JaegerConfig)
 	if err != nil {
-		logger.Fatal("cannot create tracer", err)
+		logger.Errorf("Shutting down, error while creating tracer %v", err)
+		return
 	}
 	logger.Info("Jaeger connected")
 	defer closer.Close()
@@ -44,19 +45,22 @@ func main() {
 	logger.Info("Metrics initializing")
 	metric, err := metrics.CreateMetrics(cfg.PrometheusConfig.Name)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Errorf("Shutting down, error while creating metrics %v", err)
+		return
 	}
 
 	go func() {
 		logger.Info("Metrics server running")
 		if err := metrics.RunMetricServer(cfg.PrometheusConfig.ServerConfig); err != nil {
-			logger.Fatal(err)
+			logger.Errorf("Shutting down, error while running metrics server %v", err)
+			return
 		}
 	}()
 
 	cinemaDB, err := repository.NewPostgreDB(cfg.DBConfig)
 	if err != nil {
-		logger.Fatalf("shutting down, connection to the database not established %s", err.Error())
+		logger.Errorf("Shutting down, connection to the database not established %v", err)
+		return
 	}
 	defer cinemaDB.Close()
 
@@ -67,7 +71,8 @@ func main() {
 		Password: cfg.CinemasCache.Password,
 	})
 	if err != nil {
-		logger.Fatalf("can't connect to the redis cinema cache %s", err)
+		logger.Errorf("Shutting down, connection to the cinema cache not established %v", err)
+		return
 	}
 	defer cinemaRdb.Close()
 
@@ -78,7 +83,8 @@ func main() {
 		Password: cfg.CitiesCache.Password,
 	})
 	if err != nil {
-		logger.Fatalf("can't connect to the redis сities cache %s", err)
+		logger.Errorf("Shutting down, connection to the сities cache not established %v", err)
+		return
 	}
 	defer citiesRdb.Close()
 
@@ -89,9 +95,10 @@ func main() {
 		Password: cfg.HallsCache.Password,
 	})
 	if err != nil {
-		logger.Fatalf("can't connect to the redis halls cache %s", err)
+		logger.Errorf("Shutting down, connection to the halls cache not established %v", err)
+		return
 	}
-	defer citiesRdb.Close()
+	defer hallsRdb.Close()
 
 	cinemaCache := repository.NewCinemaCache(logger.Logger, cinemaRdb, citiesRdb, hallsRdb)
 	go func() {
@@ -99,7 +106,8 @@ func main() {
 		healthcheckManager := healthcheck.NewHealthManager(logger.Logger,
 			[]healthcheck.HealthcheckResource{cinemaDB, cinemaCache}, cfg.HealthcheckPort, nil)
 		if err := healthcheckManager.RunHealthcheckEndpoint(); err != nil {
-			logger.Fatal(err)
+			logger.Error(err)
+			return
 		}
 	}()
 
