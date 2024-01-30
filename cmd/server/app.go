@@ -102,13 +102,26 @@ func main() {
 	}
 	defer hallsRdb.Close()
 
-	cinemaCache := repository.NewCinemaCache(logger.Logger, cinemaRdb, citiesRdb, hallsRdb)
+	hallsConfigurationsRdb, err := repository.NewRedisCache(&redis.Options{
+		Network:  cfg.HallsConfigurationCache.Network,
+		Addr:     cfg.HallsConfigurationCache.Addr,
+		DB:       cfg.HallsConfigurationCache.DB,
+		Password: cfg.HallsConfigurationCache.Password,
+	})
+	if err != nil {
+		logger.Errorf("Shutting down, connection to the halls configurations cache not established %v", err)
+		return
+	}
+	defer hallsConfigurationsRdb.Close()
+
+	cinemaCache := repository.NewCinemaCache(logger.Logger, cinemaRdb, citiesRdb,
+		hallsConfigurationsRdb, hallsRdb)
 	go func() {
 		logger.Info("Healthcheck initializing")
 		healthcheckManager := healthcheck.NewHealthManager(logger.Logger,
 			[]healthcheck.HealthcheckResource{cinemaDB, cinemaCache}, cfg.HealthcheckPort, nil)
 		if err := healthcheckManager.RunHealthcheckEndpoint(); err != nil {
-			logger.Error(err)
+			logger.Errorf("Shutting down, error while running healthcheck endpoint %s", err.Error())
 			shutdown <- err
 			return
 		}
@@ -120,6 +133,7 @@ func main() {
 			HallConfigurationTTL: cfg.HallsCache.TTL,
 			CinemasTTL:           cfg.CinemasCache.TTL,
 			CitiesTTL:            cfg.CitiesCache.TTL,
+			HallsTTL:             cfg.HallsCache.TTL,
 		}, metric)
 
 	service := service.NewCinemaService(logger.Logger, repository)

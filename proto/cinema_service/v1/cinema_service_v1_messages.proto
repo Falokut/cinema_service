@@ -87,7 +87,13 @@ message Hall {
 
 message Halls { repeated Hall halls = 1; }
 
+message GetHallsRequest {
+  // for multiple values use ',' separator
+  string hallsIds = 1 [ json_name = "halls_ids" ]; 
+}
+
 message GetHallConfigurationRequest { int32 hallId = 1[json_name="hall_id"]; }
+
 
 message Place {
   int32 row = 1;

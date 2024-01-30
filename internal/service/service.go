@@ -29,6 +29,7 @@ type CinemaRepository interface {
 		startPeriod, endPeriod time.Time) (*cinema_service.Screenings, error)
 	GetCinemasCities(ctx context.Context) (*cinema_service.Cities, error)
 	GetHallConfiguraion(ctx context.Context, id int32) (*cinema_service.HallConfiguration, error)
+	GetHalls(ctx context.Context, ids []int32) (*cinema_service.Halls, error)
 }
 
 type cinemaService struct {
@@ -53,6 +54,10 @@ func (s *cinemaService) GetCinemasInCity(ctx context.Context,
 		ext.LogError(span, err)
 		span.SetTag("grpc.status", status.Code(err))
 		return nil, err
+	}
+	if len(res.Cinemas) == 0 {
+		return nil, s.errorHandler.createErrorResponceWithSpan(span, ErrNotFound,
+			fmt.Sprintf("no cinema found in city with id %d", in.CityId))
 	}
 
 	span.SetTag("grpc.status", codes.OK)
@@ -165,6 +170,34 @@ func (s *cinemaService) GetHallConfiguration(ctx context.Context,
 		ext.LogError(span, err)
 		span.SetTag("grpc.status", status.Code(err))
 		return nil, err
+	}
+	span.SetTag("grpc.status", codes.OK)
+	return res, nil
+}
+
+func (s *cinemaService) GetHalls(ctx context.Context,
+	in *cinema_service.GetHallsRequest) (*cinema_service.Halls, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaService.GetHalls")
+	defer span.Finish()
+
+	in.HallsIds = strings.ReplaceAll(in.HallsIds, `"`, "")
+	if err := checkIds(in.HallsIds); err != nil {
+		return nil, s.errorHandler.createErrorResponceWithSpan(span, ErrInvalidArgument, err.Error())
+	}
+
+	ids := convertStringsSlice(strings.Split(in.HallsIds, ","))
+	if len(ids) == 0 {
+		return nil, s.errorHandler.createErrorResponceWithSpan(span, ErrInvalidArgument, "halls_ids musn't be empty")
+	}
+
+	res, err := s.cinemaRepo.GetHalls(ctx, ids)
+	if err != nil {
+		ext.LogError(span, err)
+		span.SetTag("grpc.status", status.Code(err))
+		return nil, err
+	}
+	if len(res.Halls) == 0 {
+		return nil, s.errorHandler.createErrorResponceWithSpan(span, ErrNotFound, fmt.Sprintf("halls with ids %s not found", in.HallsIds))
 	}
 	span.SetTag("grpc.status", codes.OK)
 	return res, nil

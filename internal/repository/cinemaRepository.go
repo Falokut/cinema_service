@@ -208,6 +208,24 @@ func (r *cinemaRepository) GetScreenings(ctx context.Context,
 	return screenings, nil
 }
 
+func (r *cinemaRepository) GetHalls(ctx context.Context, ids []int32) ([]Hall, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaRepository.GetHalls")
+	defer span.Finish()
+	var err error
+	defer span.SetTag("error", err != nil)
+
+	query := fmt.Sprintf(`SELECT id, COALESCE(%[1]s.name,'') AS hall_type, %[2]s.name AS name, hall_size AS size
+	FROM %[2]s LEFT JOIN %[1]s ON hall_type_id=type_id
+	WHERE id=ANY($1)`, hallsTypesTableName, hallsTableName)
+	var halls []Hall
+	err = r.db.SelectContext(ctx, &halls, query, ids)
+	if err != nil {
+		r.logger.Errorf("err: %v query: %s", err.Error(), query)
+		return []Hall{}, err
+	}
+	return halls, nil
+}
+
 func (r *cinemaRepository) GetHallConfiguraion(ctx context.Context, id int32) ([]Place, error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaRepository.GetHallConfiguraion")
 	defer span.Finish()

@@ -48,6 +48,13 @@ type DBConfig struct {
 	SSLMode  string `yaml:"ssl_mode" env:"DB_SSL_MODE"`
 }
 
+type Hall struct {
+	Id   int32  `db:"id" json:"id"`
+	Type string `db:"hall_type" json:"hall_type"`
+	Name string `db:"name" json:"name"`
+	Size uint32 `db:"size" json:"size"`
+}
+
 type Cinema struct {
 	ID          int32    `json:"id" db:"id"`
 	Name        string   `json:"name" db:"name"`
@@ -103,6 +110,9 @@ type CinemaRepository interface {
 
 	// Returns the configuration of the hall.
 	GetHallConfiguraion(ctx context.Context, id int32) ([]Place, error)
+
+	// Returns info for the halls with specified ids (without configuration).
+	GetHalls(ctx context.Context, ids []int32) ([]Hall, error)
 }
 
 type CinemaCache interface {
@@ -115,7 +125,11 @@ type CinemaCache interface {
 	// Returns the configuration of the hall.
 	GetHallConfiguraion(ctx context.Context, id int32) ([]Place, error)
 
+	// Returns info for the halls with specified ids and not founded ids (without configuration).
+	GetHalls(ctx context.Context, ids []int32) ([]Hall, []int32, error)
+
 	CacheCinemasInCity(ctx context.Context, id int32, cinemas []Cinema, ttl time.Duration) error
 	CacheCinemasCities(ctx context.Context, cities []City, ttl time.Duration) error
 	CacheHallConfiguraion(ctx context.Context, id int32, places []Place, ttl time.Duration) error
+	CacheHalls(ctx context.Context, halls []Hall, ttl time.Duration) error
 }

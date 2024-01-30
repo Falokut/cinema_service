@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"strconv"
 	"strings"
 	"time"
@@ -9,6 +10,7 @@ import (
 	"github.com/Falokut/cinema_service/internal/repository"
 	cinema_service "github.com/Falokut/cinema_service/pkg/cinema_service/v1/protos"
 	"github.com/opentracing/opentracing-go"
+	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 )
 
@@ -16,6 +18,7 @@ type CacheConfig struct {
 	HallConfigurationTTL time.Duration
 	CinemasTTL           time.Duration
 	CitiesTTL            time.Duration
+	HallsTTL             time.Duration
 }
 
 type Metrics interface {
@@ -252,6 +255,62 @@ func (w *cinemaRepositoryWrapper) GetHallConfiguraion(ctx context.Context,
 		}
 	}()
 	return convertToHallConfiguration(places), nil
+}
+
+func (w *cinemaRepositoryWrapper) GetHalls(ctx context.Context,
+	ids []int32) (*cinema_service.Halls, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx,
+		"cinemaRepositoryWrapper.GetHalls")
+	defer span.Finish()
+	w.logger.Info("Searching halls in cache")
+	cachedHalls, notFoundedIds, err := w.cache.GetHalls(ctx, ids)
+	if errors.Is(err, redis.Nil) {
+		w.metrics.IncCacheMiss("GetHalls", len(ids))
+	} else if err != nil {
+		w.logger.Error(err)
+	}
+	w.logger.Debugf("Not found halls ids in cache: %v", notFoundedIds)
+
+	if len(cachedHalls) == len(ids) {
+		w.metrics.IncCacheHits("GetHalls", len(ids))
+		return convertToHalls(cachedHalls), nil
+	}
+
+	if len(cachedHalls) != 0 && err == nil {
+		w.metrics.IncCacheHits("GetHalls", len(ids)-len(notFoundedIds))
+		w.metrics.IncCacheMiss("GetHalls", len(notFoundedIds))
+		ids = notFoundedIds
+	}
+
+	w.logger.Info("Searching halls in repository")
+	halls, err := w.repo.GetHalls(ctx, notFoundedIds)
+	if err != nil {
+		return nil, w.createErrorResponceWithSpan(span, ErrInternal, err.Error())
+	}
+	halls = append(halls, cachedHalls...)
+
+	go func() {
+		err := w.cache.CacheHalls(context.Background(), halls, w.cacheCfg.HallsTTL)
+		if err != nil {
+			w.logger.Errorf("error while caching halls, %s", err)
+		}
+	}()
+	return convertToHalls(halls), nil
+}
+
+func convertToHalls(halls []repository.Hall) *cinema_service.Halls {
+	res := &cinema_service.Halls{}
+	res.Halls = make([]*cinema_service.Hall, len(halls))
+	for i, hall := range halls {
+		res.Halls[i] = &cinema_service.Hall{
+			HallID:   hall.Id,
+			Name:     hall.Name,
+			Type:     hall.Type,
+			HallSize: hall.Size,
+		}
+	}
+
+	return res
 }
 
 func convertToHallConfiguration(places []repository.Place) *cinema_service.HallConfiguration {

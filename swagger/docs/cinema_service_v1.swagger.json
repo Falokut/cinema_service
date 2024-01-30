@@ -35,6 +35,10 @@
               "$ref": "#/definitions/cinema_serviceScreenings"
             }
           },
+          "400": {
+            "description": "Returned when specified start_period or end_period is not valid.",
+            "schema": {}
+          },
           "404": {
             "description": "Returned when the resource does not exist.",
             "schema": {
@@ -99,6 +103,10 @@
             "schema": {
               "$ref": "#/definitions/cinema_servicePreviewScreenings"
             }
+          },
+          "400": {
+            "description": "Returned when specified start_period or end_period is not valid.",
+            "schema": {}
           },
           "404": {
             "description": "Returned when the resource does not exist.",
@@ -270,9 +278,53 @@
         ]
       }
     },
+    "/v1/halls": {
+      "get": {
+        "summary": "Returns info for the halls with specified ids (without configuration).",
+        "operationId": "cinemaServiceV1_GetHalls",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/cinema_serviceHalls"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "500": {
+            "description": "Something went wrong.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "halls_ids",
+            "description": "for multiple values use ',' separator",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "cinemaServiceV1"
+        ]
+      }
+    },
     "/v1/screenings/movies": {
       "get": {
-        "summary": "Returns all movies screenings in the cinema screenings in specified cities, or in all cities,if not specified.",
+        "summary": "Returns all movies screenings in the cinema screenings in specified cities, or in all cities, if not specified.",
         "operationId": "cinemaServiceV1_GetMoviesScreeningsInCities",
         "responses": {
           "200": {
@@ -280,6 +332,10 @@
             "schema": {
               "$ref": "#/definitions/cinema_servicePreviewScreenings"
             }
+          },
+          "400": {
+            "description": "Returned when specified start_period or end_period or cities_ids is not valid.",
+            "schema": {}
           },
           "404": {
             "description": "Returned when the resource does not exist.",
@@ -397,6 +453,25 @@
         }
       }
     },
+    "cinema_serviceHall": {
+      "type": "object",
+      "properties": {
+        "hall_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "hall_size": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
     "cinema_serviceHallConfiguration": {
       "type": "object",
       "properties": {
@@ -405,6 +480,18 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/cinema_servicePlace"
+          }
+        }
+      }
+    },
+    "cinema_serviceHalls": {
+      "type": "object",
+      "properties": {
+        "halls": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/cinema_serviceHall"
           }
         }
       }

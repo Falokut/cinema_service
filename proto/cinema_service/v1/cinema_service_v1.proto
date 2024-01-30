@@ -73,6 +73,14 @@ service cinemaServiceV1 {
         option (google.api.http) = {
             get: "/v1/cinema/{cinemaId}/screenings/movies"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            responses: {
+                key: "400"
+                    value: {
+                        description: "Returned when specified start_period or end_period is not valid."
+                    }
+            };
+        };
     }
 
     // Returns all movies screenings in the cinema screenings in specified cities, or in all cities, if not specified.
@@ -80,12 +88,35 @@ service cinemaServiceV1 {
         option (google.api.http) = {
             get: "/v1/screenings/movies"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            responses: {
+                key: "400"
+                    value: {
+                        description: "Returned when specified start_period or end_period or cities_ids is not valid."
+                    }
+            };
+        };
+    }
+
+	// Returns info for the halls with specified ids (without configuration).
+    rpc GetHalls(GetHallsRequest) returns(Halls){
+        option (google.api.http) = {
+            get: "/v1/halls"
+        };
     }
 
     //Returns all screenings for a movie in a specific cinema.
     rpc GetScreenings(GetScreeningsRequest) returns(Screenings){
         option (google.api.http) = {
             get: "/v1/cinema/{cinemaId}/screenings"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            responses: {
+                key: "400"
+                    value: {
+                        description: "Returned when specified start_period or end_period is not valid."
+                    }
+            };
         };
     }
 

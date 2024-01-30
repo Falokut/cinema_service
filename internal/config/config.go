@@ -49,6 +49,14 @@ type Config struct {
 		Password string        `yaml:"password" env:"HALLS_CACHE_PASSWORD"`
 		TTL      time.Duration `yaml:"ttl"`
 	} `yaml:"halls_cache"`
+
+	HallsConfigurationCache struct {
+		Network  string        `yaml:"network" env:"HALLS_CONFIGURATIONS_CACHE_NETWORK"`
+		Addr     string        `yaml:"addr" env:"HALLS_CONFIGURATIONS_CACHE_ADDR"`
+		DB       int           `yaml:"db" env:"HALLS_CONFIGURATIONS_CACHE_DB"`
+		Password string        `yaml:"password" env:"HALLS_CONFIGURATIONS_CACHE_PASSWORD"`
+		TTL      time.Duration `yaml:"ttl"`
+	} `yaml:"halls_configurations_cache"`
 }
 
 var instance *Config
