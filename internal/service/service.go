@@ -28,6 +28,7 @@ type CinemaRepository interface {
 	GetScreenings(ctx context.Context, cinemaID, movieID int32,
 		startPeriod, endPeriod time.Time) (*cinema_service.Screenings, error)
 	GetCinemasCities(ctx context.Context) (*cinema_service.Cities, error)
+	GetCinema(ctx context.Context, id int32) (*cinema_service.Cinema, error)
 	GetHallConfiguraion(ctx context.Context, id int32) (*cinema_service.HallConfiguration, error)
 	GetHalls(ctx context.Context, ids []int32) (*cinema_service.Halls, error)
 }
@@ -175,6 +176,21 @@ func (s *cinemaService) GetHallConfiguration(ctx context.Context,
 	return res, nil
 }
 
+func (s *cinemaService) GetCinema(ctx context.Context,
+	in *cinema_service.GetCinemaRequest) (*cinema_service.Cinema, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaService.GetCinema")
+	defer span.Finish()
+
+	cinema, err := s.cinemaRepo.GetCinema(ctx, in.CinemaId)
+	if err != nil {
+		ext.LogError(span, err)
+		span.SetTag("grpc.status", status.Code(err))
+		return nil, err
+	}
+
+	span.SetTag("grpc.status", codes.OK)
+	return cinema, nil
+}
 func (s *cinemaService) GetHalls(ctx context.Context,
 	in *cinema_service.GetHallsRequest) (*cinema_service.Halls, error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaService.GetHalls")

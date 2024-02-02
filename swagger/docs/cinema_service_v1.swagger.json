@@ -24,6 +24,50 @@
     "application/json"
   ],
   "paths": {
+    "/v1/cinema/{cinemaId}": {
+      "get": {
+        "summary": "Returns cinema with specified id.",
+        "operationId": "cinemaServiceV1_GetCinema",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/cinema_serviceCinema"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "500": {
+            "description": "Something went wrong.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cinemaId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "cinemaServiceV1"
+        ]
+      }
+    },
     "/v1/cinema/{cinema_id}/screenings": {
       "get": {
         "summary": "Returns all screenings for a movie in a specific cinema.",

@@ -17,6 +17,7 @@ import (
 type CacheConfig struct {
 	HallConfigurationTTL time.Duration
 	CinemasTTL           time.Duration
+	CitiesCinemasTTL     time.Duration
 	CitiesTTL            time.Duration
 	HallsTTL             time.Duration
 }
@@ -66,7 +67,7 @@ func (w *cinemaRepositoryWrapper) GetCinemasInCity(ctx context.Context, id int32
 	}
 
 	go func() {
-		err := w.cache.CacheCinemasInCity(context.Background(), id, cinemas, w.cacheCfg.CinemasTTL)
+		err := w.cache.CacheCinemasInCity(context.Background(), id, cinemas, w.cacheCfg.CitiesCinemasTTL)
 		if err != nil {
 			w.logger.Errorf("error while caching hall configuration, %s", err)
 		}
@@ -186,6 +187,46 @@ func (w *cinemaRepositoryWrapper) GetScreenings(ctx context.Context, cinemaID, m
 	}
 
 	return res, nil
+}
+
+func (w *cinemaRepositoryWrapper) GetCinema(ctx context.Context, id int32) (*cinema_service.Cinema, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaRepositoryWrapper.GetCinema")
+	defer span.Finish()
+
+	cinema, err := w.cache.GetCinema(ctx, id)
+	if err == nil {
+		w.metrics.IncCacheHits("GetCinema", 1)
+		return convertToCinema(cinema), nil
+	}
+	w.metrics.IncCacheMiss("GetCinema", 1)
+
+	cinema, err = w.repo.GetCinema(ctx, id)
+	if errors.Is(err, repository.ErrNotFound) {
+		return nil, w.createErrorResponceWithSpan(span, ErrNotFound, "")
+	}
+	if err != nil {
+		return nil, w.createErrorResponceWithSpan(span, ErrInternal, err.Error())
+	}
+
+	go func() {
+		err := w.cache.CacheCinema(context.Background(), cinema, w.cacheCfg.CinemasTTL)
+		if err != nil {
+			w.logger.Errorf("error while cinema, %s", err)
+		}
+	}()
+	return convertToCinema(cinema), nil
+}
+
+func convertToCinema(cinema repository.Cinema) *cinema_service.Cinema {
+	return &cinema_service.Cinema{
+		CinemaID: cinema.ID,
+		Name:     cinema.Name,
+		Address:  cinema.Address,
+		Coordinates: &cinema_service.Coordinates{
+			Latityde:  cinema.Coordinates.Latityde,
+			Longitude: cinema.Coordinates.Longitude,
+		},
+	}
 }
 
 func (w *cinemaRepositoryWrapper) GetCinemasCities(ctx context.Context) (*cinema_service.Cities, error) {

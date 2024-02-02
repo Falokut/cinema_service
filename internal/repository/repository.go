@@ -49,37 +49,37 @@ type DBConfig struct {
 }
 
 type Hall struct {
-	Id   int32  `db:"id" json:"id"`
 	Type string `db:"hall_type" json:"hall_type"`
 	Name string `db:"name" json:"name"`
 	Size uint32 `db:"size" json:"size"`
+	Id   int32  `db:"id" json:"id"`
 }
 
 type Cinema struct {
-	ID          int32    `json:"id" db:"id"`
 	Name        string   `json:"name" db:"name"`
 	Address     string   `json:"address" db:"address"`
 	Coordinates GeoPoint `json:"coordinates" db:"coordinates"`
+	ID          int32    `json:"id" db:"id"`
 }
 
 type City struct {
-	ID   int32  `json:"id" db:"id"`
 	Name string `json:"name" db:"name"`
+	ID   int32  `json:"id" db:"id"`
 }
 
 type MoviesScreenings struct {
-	MovieID         int32    `json:"movie_id" db:"movie_id"`
 	ScreeningsTypes []string `json:"screenings_types" db:"screenings_types"`
 	HallsTypes      []string `json:"halls_types" db:"halls_types"`
+	MovieID         int32    `json:"movie_id" db:"movie_id"`
 }
 
 type Screening struct {
-	ScreeningID   int64     `json:"id" db:"id"`
-	MovieID       int32     `json:"movie_id" db:"movie_id"`
 	ScreeningType string    `json:"screening_type" db:"screening_type"`
-	HallID        int32     `json:"hall_id" db:"hall_id"`
 	TicketPrice   string    `json:"ticket_price" db:"ticket_price"`
 	StartTime     time.Time `json:"start_time" db:"start_time"`
+	ScreeningID   int64     `json:"id" db:"id"`
+	HallID        int32     `json:"hall_id" db:"hall_id"`
+	MovieID       int32     `json:"movie_id" db:"movie_id"`
 }
 
 type Place struct {
@@ -113,6 +113,9 @@ type CinemaRepository interface {
 
 	// Returns info for the halls with specified ids (without configuration).
 	GetHalls(ctx context.Context, ids []int32) ([]Hall, error)
+
+	// Returns cinema with specified id.
+	GetCinema(ctx context.Context, id int32) (Cinema, error)
 }
 
 type CinemaCache interface {
@@ -128,8 +131,12 @@ type CinemaCache interface {
 	// Returns info for the halls with specified ids and not founded ids (without configuration).
 	GetHalls(ctx context.Context, ids []int32) ([]Hall, []int32, error)
 
+	// Returns cinema with specified id.
+	GetCinema(ctx context.Context, id int32) (Cinema, error)
+
 	CacheCinemasInCity(ctx context.Context, id int32, cinemas []Cinema, ttl time.Duration) error
 	CacheCinemasCities(ctx context.Context, cities []City, ttl time.Duration) error
 	CacheHallConfiguraion(ctx context.Context, id int32, places []Place, ttl time.Duration) error
 	CacheHalls(ctx context.Context, halls []Hall, ttl time.Duration) error
+	CacheCinema(ctx context.Context, cinema Cinema, ttl time.Duration) error
 }

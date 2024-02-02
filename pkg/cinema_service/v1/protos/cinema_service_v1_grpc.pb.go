@@ -27,6 +27,8 @@ type CinemaServiceV1Client interface {
 	GetCinemasCities(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Cities, error)
 	// Returns cinemas in the city.
 	GetCinemasInCity(ctx context.Context, in *GetCinemasInCityRequest, opts ...grpc.CallOption) (*Cinemas, error)
+	// Returns cinema with specified id.
+	GetCinema(ctx context.Context, in *GetCinemaRequest, opts ...grpc.CallOption) (*Cinema, error)
 	// Returns all movies that are in the cinema screenings in a particular cinema.
 	GetMoviesScreenings(ctx context.Context, in *GetMoviesScreeningsRequest, opts ...grpc.CallOption) (*PreviewScreenings, error)
 	// Returns all movies screenings in the cinema screenings in specified cities, or in all cities, if not specified.
@@ -59,6 +61,15 @@ func (c *cinemaServiceV1Client) GetCinemasCities(ctx context.Context, in *emptyp
 func (c *cinemaServiceV1Client) GetCinemasInCity(ctx context.Context, in *GetCinemasInCityRequest, opts ...grpc.CallOption) (*Cinemas, error) {
 	out := new(Cinemas)
 	err := c.cc.Invoke(ctx, "/cinema_service.cinemaServiceV1/GetCinemasInCity", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cinemaServiceV1Client) GetCinema(ctx context.Context, in *GetCinemaRequest, opts ...grpc.CallOption) (*Cinema, error) {
+	out := new(Cinema)
+	err := c.cc.Invoke(ctx, "/cinema_service.cinemaServiceV1/GetCinema", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -118,6 +129,8 @@ type CinemaServiceV1Server interface {
 	GetCinemasCities(context.Context, *emptypb.Empty) (*Cities, error)
 	// Returns cinemas in the city.
 	GetCinemasInCity(context.Context, *GetCinemasInCityRequest) (*Cinemas, error)
+	// Returns cinema with specified id.
+	GetCinema(context.Context, *GetCinemaRequest) (*Cinema, error)
 	// Returns all movies that are in the cinema screenings in a particular cinema.
 	GetMoviesScreenings(context.Context, *GetMoviesScreeningsRequest) (*PreviewScreenings, error)
 	// Returns all movies screenings in the cinema screenings in specified cities, or in all cities, if not specified.
@@ -140,6 +153,9 @@ func (UnimplementedCinemaServiceV1Server) GetCinemasCities(context.Context, *emp
 }
 func (UnimplementedCinemaServiceV1Server) GetCinemasInCity(context.Context, *GetCinemasInCityRequest) (*Cinemas, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCinemasInCity not implemented")
+}
+func (UnimplementedCinemaServiceV1Server) GetCinema(context.Context, *GetCinemaRequest) (*Cinema, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCinema not implemented")
 }
 func (UnimplementedCinemaServiceV1Server) GetMoviesScreenings(context.Context, *GetMoviesScreeningsRequest) (*PreviewScreenings, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMoviesScreenings not implemented")
@@ -201,6 +217,24 @@ func _CinemaServiceV1_GetCinemasInCity_Handler(srv interface{}, ctx context.Cont
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CinemaServiceV1Server).GetCinemasInCity(ctx, req.(*GetCinemasInCityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CinemaServiceV1_GetCinema_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCinemaRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CinemaServiceV1Server).GetCinema(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cinema_service.cinemaServiceV1/GetCinema",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CinemaServiceV1Server).GetCinema(ctx, req.(*GetCinemaRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -309,6 +343,10 @@ var CinemaServiceV1_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCinemasInCity",
 			Handler:    _CinemaServiceV1_GetCinemasInCity_Handler,
+		},
+		{
+			MethodName: "GetCinema",
+			Handler:    _CinemaServiceV1_GetCinema_Handler,
 		},
 		{
 			MethodName: "GetMoviesScreenings",

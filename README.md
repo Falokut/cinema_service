@@ -32,6 +32,7 @@ if supported values is empty, then any type values are supported
 | host   |  listen    | HOST  |   string   |  ip address or host to listen   |  |
 | port   |  listen    | PORT  |   string   |  port to listen   | The string should not contain delimiters, only the port number|
 | server_mode   |  listen    | SERVER_MODE  |   string   | Server listen mode, Rest API, gRPC or both | GRPC, REST, BOTH|
+| healthcheck_port   |      | HEALTHCHECK_PORT  |   string   |     port for healthcheck| any valid port that is not occupied by other services. The string should not contain delimiters, only the port number|
 |service_name|  prometheus    | PROMETHEUS_SERVICE_NAME | string |  service name, thats will show in prometheus  ||
 |server_config|  prometheus    |   | nested yml configuration  [metrics server config](#prometheus-config) | |
 |db_config|||nested yml configuration  [database config](#database-config) || configuration for database connection | |
@@ -41,6 +42,11 @@ if supported values is empty, then any type values are supported
 |password| cinemas_cache|CINEMAS_CACHE_PASSWORD|string|password for connection to the redis||
 |db| cinemas_cache|CINEMAS_CACHE_DB|string|the number of the database in the redis||
 | ttl   | cinemas_cache     |  |  time.Duration with positive duration | the time that cinemas will be stored in the cache|[supported values](#timeduration-yaml-supported-values)|
+| network   | cities_cinemas_cache     | CITIES_CINEMA_CACHE_NETWORK  |   string   |     network type       | tcp or udp|
+| addr   |   cities_cinemas_cache   | CITIES_CINEMA_CACHE_ADDR  |   string   |   ip address(or host) with port of redis| all valid addresses formatted like host:port or ip-address:port |
+|password| cities_cinemas_cache|CITIES_CINEMA_CACHE_PASSWORD|string|password for connection to the redis||
+|db| cities_cinemas_cache|CITIES_CINEMA_CACHE_DB|string|the number of the database in the redis||
+| ttl   | cities_cinemas_cache     |  |  time.Duration with positive duration | the time that cities will be stored in the cache|[supported values](#timeduration-yaml-supported-values)|
 | network   | cities_cache     | CITIES_CACHE_NETWORK  |   string   |     network type       | tcp or udp|
 | addr   |   cities_cache   | CITIES_CACHE_ADDR  |   string   |   ip address(or host) with port of redis| all valid addresses formatted like host:port or ip-address:port |
 |password| cities_cache|CITIES_CACHE_PASSWORD|string|password for connection to the redis||

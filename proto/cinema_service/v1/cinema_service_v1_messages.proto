@@ -86,6 +86,9 @@ message Hall {
 }
 
 message Halls { repeated Hall halls = 1; }
+message GetCinemaRequest {
+  int32 cinemaId = 1;
+}
 
 message GetHallsRequest {
   // for multiple values use ',' separator

@@ -35,6 +35,15 @@ type Config struct {
 		Password string        `yaml:"password" env:"CINEMA_CACHE_PASSWORD"`
 		TTL      time.Duration `yaml:"ttl"`
 	} `yaml:"cinemas_cache"`
+
+	CitiesCinemasCache struct {
+		Network  string        `yaml:"network" env:"CITIES_CINEMA_CACHE_NETWORK"`
+		Addr     string        `yaml:"addr" env:"CITIES_CINEMA_CACHE_ADDR"`
+		DB       int           `yaml:"db" env:"CITIES_CINEMA_CACHE_DB"`
+		Password string        `yaml:"password" env:"CITIES_CINEMA_CACHE_PASSWORD"`
+		TTL      time.Duration `yaml:"ttl"`
+	} `yaml:"cities_cinemas_cache"`
+
 	CitiesCache struct {
 		Network  string        `yaml:"network" env:"CITIES_CACHE_NETWORK"`
 		Addr     string        `yaml:"addr" env:"CITIES_CACHE_ADDR"`

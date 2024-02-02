@@ -1000,6 +1000,53 @@ func (x *Halls) GetHalls() []*Hall {
 	return nil
 }
 
+type GetCinemaRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CinemaId int32 `protobuf:"varint,1,opt,name=cinemaId,proto3" json:"cinemaId,omitempty"`
+}
+
+func (x *GetCinemaRequest) Reset() {
+	*x = GetCinemaRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_cinema_service_v1_messages_proto_msgTypes[17]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetCinemaRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCinemaRequest) ProtoMessage() {}
+
+func (x *GetCinemaRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_cinema_service_v1_messages_proto_msgTypes[17]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCinemaRequest.ProtoReflect.Descriptor instead.
+func (*GetCinemaRequest) Descriptor() ([]byte, []int) {
+	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *GetCinemaRequest) GetCinemaId() int32 {
+	if x != nil {
+		return x.CinemaId
+	}
+	return 0
+}
+
 type GetHallsRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1012,7 +1059,7 @@ type GetHallsRequest struct {
 func (x *GetHallsRequest) Reset() {
 	*x = GetHallsRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cinema_service_v1_messages_proto_msgTypes[17]
+		mi := &file_cinema_service_v1_messages_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1025,7 +1072,7 @@ func (x *GetHallsRequest) String() string {
 func (*GetHallsRequest) ProtoMessage() {}
 
 func (x *GetHallsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cinema_service_v1_messages_proto_msgTypes[17]
+	mi := &file_cinema_service_v1_messages_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1038,7 +1085,7 @@ func (x *GetHallsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetHallsRequest.ProtoReflect.Descriptor instead.
 func (*GetHallsRequest) Descriptor() ([]byte, []int) {
-	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{17}
+	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *GetHallsRequest) GetHallsIds() string {
@@ -1059,7 +1106,7 @@ type GetHallConfigurationRequest struct {
 func (x *GetHallConfigurationRequest) Reset() {
 	*x = GetHallConfigurationRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cinema_service_v1_messages_proto_msgTypes[18]
+		mi := &file_cinema_service_v1_messages_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1072,7 +1119,7 @@ func (x *GetHallConfigurationRequest) String() string {
 func (*GetHallConfigurationRequest) ProtoMessage() {}
 
 func (x *GetHallConfigurationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cinema_service_v1_messages_proto_msgTypes[18]
+	mi := &file_cinema_service_v1_messages_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1085,7 +1132,7 @@ func (x *GetHallConfigurationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetHallConfigurationRequest.ProtoReflect.Descriptor instead.
 func (*GetHallConfigurationRequest) Descriptor() ([]byte, []int) {
-	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{18}
+	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *GetHallConfigurationRequest) GetHallId() int32 {
@@ -1109,7 +1156,7 @@ type Place struct {
 func (x *Place) Reset() {
 	*x = Place{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cinema_service_v1_messages_proto_msgTypes[19]
+		mi := &file_cinema_service_v1_messages_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1122,7 +1169,7 @@ func (x *Place) String() string {
 func (*Place) ProtoMessage() {}
 
 func (x *Place) ProtoReflect() protoreflect.Message {
-	mi := &file_cinema_service_v1_messages_proto_msgTypes[19]
+	mi := &file_cinema_service_v1_messages_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1135,7 +1182,7 @@ func (x *Place) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Place.ProtoReflect.Descriptor instead.
 func (*Place) Descriptor() ([]byte, []int) {
-	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{19}
+	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *Place) GetRow() int32 {
@@ -1177,7 +1224,7 @@ type HallConfiguration struct {
 func (x *HallConfiguration) Reset() {
 	*x = HallConfiguration{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cinema_service_v1_messages_proto_msgTypes[20]
+		mi := &file_cinema_service_v1_messages_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1190,7 +1237,7 @@ func (x *HallConfiguration) String() string {
 func (*HallConfiguration) ProtoMessage() {}
 
 func (x *HallConfiguration) ProtoReflect() protoreflect.Message {
-	mi := &file_cinema_service_v1_messages_proto_msgTypes[20]
+	mi := &file_cinema_service_v1_messages_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1203,7 +1250,7 @@ func (x *HallConfiguration) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HallConfiguration.ProtoReflect.Descriptor instead.
 func (*HallConfiguration) Descriptor() ([]byte, []int) {
-	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{20}
+	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *HallConfiguration) GetPlace() []*Place {
@@ -1224,7 +1271,7 @@ type GetCinemaHalls struct {
 func (x *GetCinemaHalls) Reset() {
 	*x = GetCinemaHalls{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cinema_service_v1_messages_proto_msgTypes[21]
+		mi := &file_cinema_service_v1_messages_proto_msgTypes[22]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1237,7 +1284,7 @@ func (x *GetCinemaHalls) String() string {
 func (*GetCinemaHalls) ProtoMessage() {}
 
 func (x *GetCinemaHalls) ProtoReflect() protoreflect.Message {
-	mi := &file_cinema_service_v1_messages_proto_msgTypes[21]
+	mi := &file_cinema_service_v1_messages_proto_msgTypes[22]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1250,7 +1297,7 @@ func (x *GetCinemaHalls) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCinemaHalls.ProtoReflect.Descriptor instead.
 func (*GetCinemaHalls) Descriptor() ([]byte, []int) {
-	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{21}
+	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *GetCinemaHalls) GetCinemaId() int32 {
@@ -1380,6 +1427,9 @@ var file_cinema_service_v1_messages_proto_rawDesc = []byte{
 	0x6c, 0x6c, 0x73, 0x12, 0x2a, 0x0a, 0x05, 0x68, 0x61, 0x6c, 0x6c, 0x73, 0x18, 0x01, 0x20, 0x03,
 	0x28, 0x0b, 0x32, 0x14, 0x2e, 0x63, 0x69, 0x6e, 0x65, 0x6d, 0x61, 0x5f, 0x73, 0x65, 0x72, 0x76,
 	0x69, 0x63, 0x65, 0x2e, 0x48, 0x61, 0x6c, 0x6c, 0x52, 0x05, 0x68, 0x61, 0x6c, 0x6c, 0x73, 0x22,
+	0x2e, 0x0a, 0x10, 0x47, 0x65, 0x74, 0x43, 0x69, 0x6e, 0x65, 0x6d, 0x61, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x12, 0x1a, 0x0a, 0x08, 0x63, 0x69, 0x6e, 0x65, 0x6d, 0x61, 0x49, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x63, 0x69, 0x6e, 0x65, 0x6d, 0x61, 0x49, 0x64, 0x22,
 	0x2e, 0x0a, 0x0f, 0x47, 0x65, 0x74, 0x48, 0x61, 0x6c, 0x6c, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65,
 	0x73, 0x74, 0x12, 0x1b, 0x0a, 0x08, 0x68, 0x61, 0x6c, 0x6c, 0x73, 0x49, 0x64, 0x73, 0x18, 0x01,
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x68, 0x61, 0x6c, 0x6c, 0x73, 0x5f, 0x69, 0x64, 0x73, 0x22,
@@ -1417,7 +1467,7 @@ func file_cinema_service_v1_messages_proto_rawDescGZIP() []byte {
 	return file_cinema_service_v1_messages_proto_rawDescData
 }
 
-var file_cinema_service_v1_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
+var file_cinema_service_v1_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
 var file_cinema_service_v1_messages_proto_goTypes = []interface{}{
 	(*Timestamp)(nil),                          // 0: cinema_service.Timestamp
 	(*GetMoviesScreeningsRequest)(nil),         // 1: cinema_service.GetMoviesScreeningsRequest
@@ -1436,11 +1486,12 @@ var file_cinema_service_v1_messages_proto_goTypes = []interface{}{
 	(*Cities)(nil),                             // 14: cinema_service.Cities
 	(*Hall)(nil),                               // 15: cinema_service.Hall
 	(*Halls)(nil),                              // 16: cinema_service.Halls
-	(*GetHallsRequest)(nil),                    // 17: cinema_service.GetHallsRequest
-	(*GetHallConfigurationRequest)(nil),        // 18: cinema_service.GetHallConfigurationRequest
-	(*Place)(nil),                              // 19: cinema_service.Place
-	(*HallConfiguration)(nil),                  // 20: cinema_service.HallConfiguration
-	(*GetCinemaHalls)(nil),                     // 21: cinema_service.GetCinemaHalls
+	(*GetCinemaRequest)(nil),                   // 17: cinema_service.GetCinemaRequest
+	(*GetHallsRequest)(nil),                    // 18: cinema_service.GetHallsRequest
+	(*GetHallConfigurationRequest)(nil),        // 19: cinema_service.GetHallConfigurationRequest
+	(*Place)(nil),                              // 20: cinema_service.Place
+	(*HallConfiguration)(nil),                  // 21: cinema_service.HallConfiguration
+	(*GetCinemaHalls)(nil),                     // 22: cinema_service.GetCinemaHalls
 }
 var file_cinema_service_v1_messages_proto_depIdxs = []int32{
 	0,  // 0: cinema_service.GetMoviesScreeningsRequest.startPeriod:type_name -> cinema_service.Timestamp
@@ -1457,7 +1508,7 @@ var file_cinema_service_v1_messages_proto_depIdxs = []int32{
 	11, // 11: cinema_service.Cinemas.cinemas:type_name -> cinema_service.Cinema
 	13, // 12: cinema_service.Cities.cities:type_name -> cinema_service.City
 	15, // 13: cinema_service.Halls.halls:type_name -> cinema_service.Hall
-	19, // 14: cinema_service.HallConfiguration.place:type_name -> cinema_service.Place
+	20, // 14: cinema_service.HallConfiguration.place:type_name -> cinema_service.Place
 	15, // [15:15] is the sub-list for method output_type
 	15, // [15:15] is the sub-list for method input_type
 	15, // [15:15] is the sub-list for extension type_name
@@ -1676,7 +1727,7 @@ func file_cinema_service_v1_messages_proto_init() {
 			}
 		}
 		file_cinema_service_v1_messages_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetHallsRequest); i {
+			switch v := v.(*GetCinemaRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1688,7 +1739,7 @@ func file_cinema_service_v1_messages_proto_init() {
 			}
 		}
 		file_cinema_service_v1_messages_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetHallConfigurationRequest); i {
+			switch v := v.(*GetHallsRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1700,7 +1751,7 @@ func file_cinema_service_v1_messages_proto_init() {
 			}
 		}
 		file_cinema_service_v1_messages_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Place); i {
+			switch v := v.(*GetHallConfigurationRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1712,7 +1763,7 @@ func file_cinema_service_v1_messages_proto_init() {
 			}
 		}
 		file_cinema_service_v1_messages_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*HallConfiguration); i {
+			switch v := v.(*Place); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1724,6 +1775,18 @@ func file_cinema_service_v1_messages_proto_init() {
 			}
 		}
 		file_cinema_service_v1_messages_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*HallConfiguration); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_cinema_service_v1_messages_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetCinemaHalls); i {
 			case 0:
 				return &v.state
@@ -1743,7 +1806,7 @@ func file_cinema_service_v1_messages_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_cinema_service_v1_messages_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   22,
+			NumMessages:   23,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

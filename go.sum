@@ -12,6 +12,8 @@ github.com/Falokut/grpc_rest_server v1.0.5 h1:mEWQpMo/61nU+/fDIJ7rlwmc6qh7ydomxA
 github.com/Falokut/grpc_rest_server v1.0.5/go.mod h1:7mWQVyKxk3njgX2p3dY7qAKvtVzXckCKp07keUAJWHI=
 github.com/Falokut/grpc_rest_server v1.0.6 h1:RZN7YHIjNr+51fzMm5s2w+H0Yfmk9+tUE9r/B+8Xs7U=
 github.com/Falokut/grpc_rest_server v1.0.6/go.mod h1:7mWQVyKxk3njgX2p3dY7qAKvtVzXckCKp07keUAJWHI=
+github.com/Falokut/grpc_rest_server v1.0.7 h1:yY9/90YlmFC0uZ7K7n0SDE8TpFzYSzMXWthIorHAGWI=
+github.com/Falokut/grpc_rest_server v1.0.7/go.mod h1:7mWQVyKxk3njgX2p3dY7qAKvtVzXckCKp07keUAJWHI=
 github.com/Falokut/healthcheck v0.0.0-20231124155013-bff54f9bc002 h1:lnv8v7IvCnKxRbrWjINHOWHpZPpFDSqv0QFi8v1UM4E=
 github.com/Falokut/healthcheck v0.0.0-20231124155013-bff54f9bc002/go.mod h1:S4mxGDEYOzK4c5KgTs2tCSNovzu7lLaNSIPG4lX3a1w=
 github.com/Falokut/interceptors v1.0.3 h1:lRPEFpyF90tsIBVhYowAG90cUy8X04ODlSgokaQkSLI=
@@ -72,6 +74,8 @@ github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.1 h1:6UKoz5ujsI55KNpsJH3UwCq3T8k
 github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.1/go.mod h1:YvJ2f6MplWDhfxiUC3KpyTy76kYUZA4W3pTv/wdKQ9Y=
 github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0 h1:Wqo399gCIufwto+VfwCSvsnfGpF/w5E9CNxSwbpD6No=
 github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0/go.mod h1:qmOFXW2epJhM0qSnUUYpldc7gVz2KMQwJ/QYCDIa7XU=
+github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.1 h1:/c3QmbOGMGTOumP2iT/rCwB7b0QDGLKzqOmktBjT+Is=
+github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.1/go.mod h1:5SN9VR2LTsRFsrEC6FHgRbTWrTHu6tqPeKxEQv15giM=
 github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645 h1:MJG/KsmcqMwFAkh8mTnAwhyKoB+sTAnY4CACC110tbU=
 github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645/go.mod h1:6iZfnjpejD4L/4DwD7NryNaJyCQdzwWwH2MWhCA90Kw=
 github.com/ilyakaznacheev/cleanenv v1.5.0 h1:0VNZXggJE2OYdXE87bfSSwGxeiGt9moSR2lOrsHHvr4=

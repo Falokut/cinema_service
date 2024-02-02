@@ -15,7 +15,7 @@ db_config:
 
 jaeger:
   service_name: "Cinema_Service"
-  address: jaeger:6831
+  address: host.docker.internal:6831
   log_spans: true
 
 prometheus:
@@ -30,7 +30,7 @@ cities_cache:
   db: 0
   ttl: 30m
 
-cinemas_cache:
+cities_cinemas_cache:
   network: "tcp"
   addr: "cinema_service_cache:6379"
   db: 1
@@ -46,4 +46,10 @@ halls_configurations_cache:
   network: "tcp"
   addr: "cinema_service_cache:6379"
   db: 3
+  ttl: 30m
+
+cinemas_cache:
+  network: "tcp"
+  addr: "cinema_service_cache:6379"
+  db: 4
   ttl: 30m

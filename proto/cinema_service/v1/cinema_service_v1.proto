@@ -68,6 +68,14 @@ service cinemaServiceV1 {
             get: "/v1/cities/{cityId}/cinemas"
         };
     }
+
+    // Returns cinema with specified id.
+    rpc GetCinema(GetCinemaRequest) returns(Cinema){
+        option (google.api.http) = {
+            get: "/v1/cinema/{cinemaId}"
+        };
+    }
+
     // Returns all movies that are in the cinema screenings in a particular cinema.
     rpc GetMoviesScreenings(GetMoviesScreeningsRequest) returns(PreviewScreenings){
         option (google.api.http) = {

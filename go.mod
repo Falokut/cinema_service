@@ -4,10 +4,10 @@ go 1.21.5
 
 require (
 	github.com/Falokut/grpc_errors v1.0.0
-	github.com/Falokut/grpc_rest_server v1.0.6
+	github.com/Falokut/grpc_rest_server v1.0.7
 	github.com/Falokut/healthcheck v0.0.0-20231124155013-bff54f9bc002
 	github.com/Falokut/online_cinema_ticket_office.loggerwrapper v0.0.0-20231130151717-09aa21496f83
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.1
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/opentracing/opentracing-go v1.2.0

@@ -66,7 +66,19 @@ func main() {
 	}
 	defer cinemaDB.Close()
 
-	cinemaRdb, err := repository.NewRedisCache(&redis.Options{
+	citiesCinemas, err := repository.NewRedisCache(&redis.Options{
+		Network:  cfg.CitiesCinemasCache.Network,
+		Addr:     cfg.CitiesCinemasCache.Addr,
+		DB:       cfg.CitiesCinemasCache.DB,
+		Password: cfg.CitiesCinemasCache.Password,
+	})
+	if err != nil {
+		logger.Errorf("Shutting down, connection to the cities cinemas cache not established %v", err)
+		return
+	}
+	defer citiesCinemas.Close()
+
+	cinemasRdb, err := repository.NewRedisCache(&redis.Options{
 		Network:  cfg.CinemasCache.Network,
 		Addr:     cfg.CinemasCache.Addr,
 		DB:       cfg.CinemasCache.DB,
@@ -76,7 +88,7 @@ func main() {
 		logger.Errorf("Shutting down, connection to the cinema cache not established %v", err)
 		return
 	}
-	defer cinemaRdb.Close()
+	defer cinemasRdb.Close()
 
 	citiesRdb, err := repository.NewRedisCache(&redis.Options{
 		Network:  cfg.CitiesCache.Network,
@@ -114,7 +126,7 @@ func main() {
 	}
 	defer hallsConfigurationsRdb.Close()
 
-	cinemaCache := repository.NewCinemaCache(logger.Logger, cinemaRdb, citiesRdb,
+	cinemaCache := repository.NewCinemaCache(logger.Logger, citiesCinemas, cinemasRdb, citiesRdb,
 		hallsConfigurationsRdb, hallsRdb)
 	go func() {
 		logger.Info("Healthcheck initializing")
@@ -134,6 +146,7 @@ func main() {
 			CinemasTTL:           cfg.CinemasCache.TTL,
 			CitiesTTL:            cfg.CitiesCache.TTL,
 			HallsTTL:             cfg.HallsCache.TTL,
+			CitiesCinemasTTL:     cfg.CitiesCinemasCache.TTL,
 		}, metric)
 
 	service := service.NewCinemaService(logger.Logger, repository)

@@ -2,6 +2,8 @@ package repository
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -206,6 +208,28 @@ func (r *cinemaRepository) GetScreenings(ctx context.Context,
 	}
 
 	return screenings, nil
+}
+func (r *cinemaRepository) GetCinema(ctx context.Context, id int32) (Cinema, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaRepository.GetCinema")
+	defer span.Finish()
+	var err error
+	defer span.SetTag("error", err != nil)
+
+	query := fmt.Sprintf(`SELECT id,name,address, ST_AsText(coordinates) AS coordinates
+	FROM %s WHERE id=$1`, cinemasTableName)
+
+	var cinema Cinema
+	err = r.db.GetContext(ctx, &cinema, query, id)
+	if errors.Is(err, sql.ErrNoRows) {
+		return Cinema{}, ErrNotFound
+	}
+
+	if err != nil {
+		r.logger.Errorf("err: %v query: %s", err.Error(), query)
+		return Cinema{}, err
+	}
+
+	return cinema, nil
 }
 
 func (r *cinemaRepository) GetHalls(ctx context.Context, ids []int32) ([]Hall, error) {
