@@ -14,7 +14,7 @@
 
 # Configuration
 
-1. [Configure movies_db](movies_db/README.md#Configuration)
+1. [Configure cinema_db](cinema_db/README.md#Configuration)
 2. Create .env on project root dir  
 Example env:
 ```env

@@ -1,8 +1,4 @@
-CREATE ROLE cinema_service WITH
-    LOGIN
-    ENCRYPTED PASSWORD 'SCRAM-SHA-256$4096:R9TMUdvkUG5yxu0rJlO+hA==$E/WRNMfl6SWK9xreXN8rfIkJjpQhWO8pd+8t2kx12D0=:sCS47DCNVIZYhoue/BReTE0ZhVRXzMGszsnnHexVwOU=';
-
-
+CREATE EXTENSION postgis;
 
 CREATE TABLE cities (
     id SERIAL PRIMARY KEY,
@@ -32,7 +28,7 @@ CREATE TABLE halls (
 );
 
 CREATE TABLE halls_configurations (
-    hall_id INT REFERENCES halls(id) ON UPDATE CASCADE,
+    hall_id INT REFERENCES halls(id) ON UPDATE CASCADE ON DELETE CASCADE,
     row INT CHECK(row > 0),
     seat INT CHECK(seat > 0),
     grid_pos_x FLOAT NOT NULL,
@@ -44,7 +40,7 @@ CREATE OR REPLACE FUNCTION update_hall_size()
 RETURNS TRIGGER
 AS $$
 BEGIN
-    UPDATE halls SET hall_size=(SELECT COUNT(seat) FROM halls_configurations WHERE hall_id=id);
+    UPDATE halls SET hall_size=( SELECT COUNT(seat) FROM halls_configurations WHERE hall_id=id);
     RETURN NEW;
 END; $$
 LANGUAGE PLPGSQL;
@@ -69,13 +65,9 @@ CREATE TABLE screenings (
     screening_type_id INT REFERENCES screenings_types(id) ON UPDATE CASCADE ON DELETE SET NULL,
     movie_id INT NOT NULL,
     start_time TIMESTAMPTZ NOT NULL CHECK(start_time > clock_timestamp()),
-    hall_id INT REFERENCES halls(id) ON UPDATE CASCADE,
+    hall_id INT REFERENCES halls(id) ON UPDATE CASCADE ON DELETE SET NULL,
     ticket_price DECIMAL(8,2) CHECK(ticket_price>0.0)
 );
-
-
-
-
 GRANT SELECT ON cities TO cinema_service;
 GRANT SELECT ON cinemas TO cinema_service;
 GRANT SELECT ON halls_configurations TO cinema_service;
@@ -84,8 +76,4 @@ GRANT SELECT ON halls_types TO cinema_service;
 GRANT SELECT ON halls TO cinema_service;
 GRANT SELECT ON screenings TO cinema_service;
 GRANT SELECT ON screenings_types TO cinema_service;
-
-
-
-
 
