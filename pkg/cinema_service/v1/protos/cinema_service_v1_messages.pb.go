@@ -1047,6 +1047,211 @@ func (x *GetCinemaRequest) GetCinemaId() int32 {
 	return 0
 }
 
+type GetScreeningsInCityRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CityId      int32      `protobuf:"varint,1,opt,name=cityId,json=city_id,proto3" json:"cityId,omitempty"`
+	MovieId     int32      `protobuf:"varint,2,opt,name=movieId,json=movie_id,proto3" json:"movieId,omitempty"`
+	StartPeriod *Timestamp `protobuf:"bytes,3,opt,name=startPeriod,json=start_period,proto3" json:"startPeriod,omitempty"`
+	EndPeriod   *Timestamp `protobuf:"bytes,4,opt,name=endPeriod,json=end_period,proto3" json:"endPeriod,omitempty"`
+}
+
+func (x *GetScreeningsInCityRequest) Reset() {
+	*x = GetScreeningsInCityRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_cinema_service_v1_messages_proto_msgTypes[18]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetScreeningsInCityRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetScreeningsInCityRequest) ProtoMessage() {}
+
+func (x *GetScreeningsInCityRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_cinema_service_v1_messages_proto_msgTypes[18]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetScreeningsInCityRequest.ProtoReflect.Descriptor instead.
+func (*GetScreeningsInCityRequest) Descriptor() ([]byte, []int) {
+	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *GetScreeningsInCityRequest) GetCityId() int32 {
+	if x != nil {
+		return x.CityId
+	}
+	return 0
+}
+
+func (x *GetScreeningsInCityRequest) GetMovieId() int32 {
+	if x != nil {
+		return x.MovieId
+	}
+	return 0
+}
+
+func (x *GetScreeningsInCityRequest) GetStartPeriod() *Timestamp {
+	if x != nil {
+		return x.StartPeriod
+	}
+	return nil
+}
+
+func (x *GetScreeningsInCityRequest) GetEndPeriod() *Timestamp {
+	if x != nil {
+		return x.EndPeriod
+	}
+	return nil
+}
+
+type CityScreening struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ScreeningId   int64      `protobuf:"varint,1,opt,name=screeningId,json=screening_id,proto3" json:"screeningId,omitempty"`
+	CinemaId      int32      `protobuf:"varint,2,opt,name=cinema_id,proto3" json:"cinema_id,omitempty"`
+	ScreeningType string     `protobuf:"bytes,3,opt,name=screeningType,json=screening_type,proto3" json:"screeningType,omitempty"`
+	StartTime     *Timestamp `protobuf:"bytes,4,opt,name=startTime,json=start_time,proto3" json:"startTime,omitempty"`
+	HallID        int32      `protobuf:"varint,5,opt,name=hallID,json=hall_id,proto3" json:"hallID,omitempty"`
+	TicketPrice   *Price     `protobuf:"bytes,6,opt,name=ticketPrice,json=ticket_price,proto3" json:"ticketPrice,omitempty"`
+}
+
+func (x *CityScreening) Reset() {
+	*x = CityScreening{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_cinema_service_v1_messages_proto_msgTypes[19]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CityScreening) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CityScreening) ProtoMessage() {}
+
+func (x *CityScreening) ProtoReflect() protoreflect.Message {
+	mi := &file_cinema_service_v1_messages_proto_msgTypes[19]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CityScreening.ProtoReflect.Descriptor instead.
+func (*CityScreening) Descriptor() ([]byte, []int) {
+	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *CityScreening) GetScreeningId() int64 {
+	if x != nil {
+		return x.ScreeningId
+	}
+	return 0
+}
+
+func (x *CityScreening) GetCinemaId() int32 {
+	if x != nil {
+		return x.CinemaId
+	}
+	return 0
+}
+
+func (x *CityScreening) GetScreeningType() string {
+	if x != nil {
+		return x.ScreeningType
+	}
+	return ""
+}
+
+func (x *CityScreening) GetStartTime() *Timestamp {
+	if x != nil {
+		return x.StartTime
+	}
+	return nil
+}
+
+func (x *CityScreening) GetHallID() int32 {
+	if x != nil {
+		return x.HallID
+	}
+	return 0
+}
+
+func (x *CityScreening) GetTicketPrice() *Price {
+	if x != nil {
+		return x.TicketPrice
+	}
+	return nil
+}
+
+type CityScreenings struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Screenings []*CityScreening `protobuf:"bytes,1,rep,name=screenings,proto3" json:"screenings,omitempty"`
+}
+
+func (x *CityScreenings) Reset() {
+	*x = CityScreenings{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_cinema_service_v1_messages_proto_msgTypes[20]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CityScreenings) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CityScreenings) ProtoMessage() {}
+
+func (x *CityScreenings) ProtoReflect() protoreflect.Message {
+	mi := &file_cinema_service_v1_messages_proto_msgTypes[20]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CityScreenings.ProtoReflect.Descriptor instead.
+func (*CityScreenings) Descriptor() ([]byte, []int) {
+	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *CityScreenings) GetScreenings() []*CityScreening {
+	if x != nil {
+		return x.Screenings
+	}
+	return nil
+}
+
 type GetHallsRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1059,7 +1264,7 @@ type GetHallsRequest struct {
 func (x *GetHallsRequest) Reset() {
 	*x = GetHallsRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cinema_service_v1_messages_proto_msgTypes[18]
+		mi := &file_cinema_service_v1_messages_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1072,7 +1277,7 @@ func (x *GetHallsRequest) String() string {
 func (*GetHallsRequest) ProtoMessage() {}
 
 func (x *GetHallsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cinema_service_v1_messages_proto_msgTypes[18]
+	mi := &file_cinema_service_v1_messages_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1085,7 +1290,7 @@ func (x *GetHallsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetHallsRequest.ProtoReflect.Descriptor instead.
 func (*GetHallsRequest) Descriptor() ([]byte, []int) {
-	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{18}
+	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *GetHallsRequest) GetHallsIds() string {
@@ -1106,7 +1311,7 @@ type GetHallConfigurationRequest struct {
 func (x *GetHallConfigurationRequest) Reset() {
 	*x = GetHallConfigurationRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cinema_service_v1_messages_proto_msgTypes[19]
+		mi := &file_cinema_service_v1_messages_proto_msgTypes[22]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1119,7 +1324,7 @@ func (x *GetHallConfigurationRequest) String() string {
 func (*GetHallConfigurationRequest) ProtoMessage() {}
 
 func (x *GetHallConfigurationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cinema_service_v1_messages_proto_msgTypes[19]
+	mi := &file_cinema_service_v1_messages_proto_msgTypes[22]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1132,7 +1337,7 @@ func (x *GetHallConfigurationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetHallConfigurationRequest.ProtoReflect.Descriptor instead.
 func (*GetHallConfigurationRequest) Descriptor() ([]byte, []int) {
-	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{19}
+	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *GetHallConfigurationRequest) GetHallId() int32 {
@@ -1156,7 +1361,7 @@ type Place struct {
 func (x *Place) Reset() {
 	*x = Place{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cinema_service_v1_messages_proto_msgTypes[20]
+		mi := &file_cinema_service_v1_messages_proto_msgTypes[23]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1169,7 +1374,7 @@ func (x *Place) String() string {
 func (*Place) ProtoMessage() {}
 
 func (x *Place) ProtoReflect() protoreflect.Message {
-	mi := &file_cinema_service_v1_messages_proto_msgTypes[20]
+	mi := &file_cinema_service_v1_messages_proto_msgTypes[23]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1182,7 +1387,7 @@ func (x *Place) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Place.ProtoReflect.Descriptor instead.
 func (*Place) Descriptor() ([]byte, []int) {
-	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{20}
+	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *Place) GetRow() int32 {
@@ -1213,6 +1418,148 @@ func (x *Place) GetGridPosY() float32 {
 	return 0
 }
 
+type GetScreeningRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ScreeningId int32 `protobuf:"varint,1,opt,name=screeningId,json=screening_id,proto3" json:"screeningId,omitempty"`
+}
+
+func (x *GetScreeningRequest) Reset() {
+	*x = GetScreeningRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_cinema_service_v1_messages_proto_msgTypes[24]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetScreeningRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetScreeningRequest) ProtoMessage() {}
+
+func (x *GetScreeningRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_cinema_service_v1_messages_proto_msgTypes[24]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetScreeningRequest.ProtoReflect.Descriptor instead.
+func (*GetScreeningRequest) Descriptor() ([]byte, []int) {
+	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *GetScreeningRequest) GetScreeningId() int32 {
+	if x != nil {
+		return x.ScreeningId
+	}
+	return 0
+}
+
+type GetScreeningResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CinemaId          int32              `protobuf:"varint,1,opt,name=cinemaId,json=cinema_id,proto3" json:"cinemaId,omitempty"`
+	MovieId           int32              `protobuf:"varint,2,opt,name=movieId,json=movie_id,proto3" json:"movieId,omitempty"`
+	ScreeningType     string             `protobuf:"bytes,3,opt,name=screeningType,json=screening_type,proto3" json:"screeningType,omitempty"`
+	StartTime         *Timestamp         `protobuf:"bytes,4,opt,name=startTime,json=start_time,proto3" json:"startTime,omitempty"`
+	HallID            int32              `protobuf:"varint,5,opt,name=hallID,json=hall_id,proto3" json:"hallID,omitempty"`
+	TicketPrice       *Price             `protobuf:"bytes,6,opt,name=ticketPrice,json=ticket_price,proto3" json:"ticketPrice,omitempty"`
+	HallConfiguration *HallConfiguration `protobuf:"bytes,7,opt,name=hallConfiguration,json=hall_configuration,proto3" json:"hallConfiguration,omitempty"`
+}
+
+func (x *GetScreeningResponse) Reset() {
+	*x = GetScreeningResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_cinema_service_v1_messages_proto_msgTypes[25]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetScreeningResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetScreeningResponse) ProtoMessage() {}
+
+func (x *GetScreeningResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_cinema_service_v1_messages_proto_msgTypes[25]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetScreeningResponse.ProtoReflect.Descriptor instead.
+func (*GetScreeningResponse) Descriptor() ([]byte, []int) {
+	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *GetScreeningResponse) GetCinemaId() int32 {
+	if x != nil {
+		return x.CinemaId
+	}
+	return 0
+}
+
+func (x *GetScreeningResponse) GetMovieId() int32 {
+	if x != nil {
+		return x.MovieId
+	}
+	return 0
+}
+
+func (x *GetScreeningResponse) GetScreeningType() string {
+	if x != nil {
+		return x.ScreeningType
+	}
+	return ""
+}
+
+func (x *GetScreeningResponse) GetStartTime() *Timestamp {
+	if x != nil {
+		return x.StartTime
+	}
+	return nil
+}
+
+func (x *GetScreeningResponse) GetHallID() int32 {
+	if x != nil {
+		return x.HallID
+	}
+	return 0
+}
+
+func (x *GetScreeningResponse) GetTicketPrice() *Price {
+	if x != nil {
+		return x.TicketPrice
+	}
+	return nil
+}
+
+func (x *GetScreeningResponse) GetHallConfiguration() *HallConfiguration {
+	if x != nil {
+		return x.HallConfiguration
+	}
+	return nil
+}
+
 type HallConfiguration struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1224,7 +1571,7 @@ type HallConfiguration struct {
 func (x *HallConfiguration) Reset() {
 	*x = HallConfiguration{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cinema_service_v1_messages_proto_msgTypes[21]
+		mi := &file_cinema_service_v1_messages_proto_msgTypes[26]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1237,7 +1584,7 @@ func (x *HallConfiguration) String() string {
 func (*HallConfiguration) ProtoMessage() {}
 
 func (x *HallConfiguration) ProtoReflect() protoreflect.Message {
-	mi := &file_cinema_service_v1_messages_proto_msgTypes[21]
+	mi := &file_cinema_service_v1_messages_proto_msgTypes[26]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1250,7 +1597,7 @@ func (x *HallConfiguration) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HallConfiguration.ProtoReflect.Descriptor instead.
 func (*HallConfiguration) Descriptor() ([]byte, []int) {
-	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{21}
+	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *HallConfiguration) GetPlace() []*Place {
@@ -1271,7 +1618,7 @@ type GetCinemaHalls struct {
 func (x *GetCinemaHalls) Reset() {
 	*x = GetCinemaHalls{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cinema_service_v1_messages_proto_msgTypes[22]
+		mi := &file_cinema_service_v1_messages_proto_msgTypes[27]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1284,7 +1631,7 @@ func (x *GetCinemaHalls) String() string {
 func (*GetCinemaHalls) ProtoMessage() {}
 
 func (x *GetCinemaHalls) ProtoReflect() protoreflect.Message {
-	mi := &file_cinema_service_v1_messages_proto_msgTypes[22]
+	mi := &file_cinema_service_v1_messages_proto_msgTypes[27]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1297,7 +1644,7 @@ func (x *GetCinemaHalls) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCinemaHalls.ProtoReflect.Descriptor instead.
 func (*GetCinemaHalls) Descriptor() ([]byte, []int) {
-	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{22}
+	return file_cinema_service_v1_messages_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *GetCinemaHalls) GetCinemaId() int32 {
@@ -1430,29 +1777,88 @@ var file_cinema_service_v1_messages_proto_rawDesc = []byte{
 	0x2e, 0x0a, 0x10, 0x47, 0x65, 0x74, 0x43, 0x69, 0x6e, 0x65, 0x6d, 0x61, 0x52, 0x65, 0x71, 0x75,
 	0x65, 0x73, 0x74, 0x12, 0x1a, 0x0a, 0x08, 0x63, 0x69, 0x6e, 0x65, 0x6d, 0x61, 0x49, 0x64, 0x18,
 	0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x63, 0x69, 0x6e, 0x65, 0x6d, 0x61, 0x49, 0x64, 0x22,
-	0x2e, 0x0a, 0x0f, 0x47, 0x65, 0x74, 0x48, 0x61, 0x6c, 0x6c, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x12, 0x1b, 0x0a, 0x08, 0x68, 0x61, 0x6c, 0x6c, 0x73, 0x49, 0x64, 0x73, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x68, 0x61, 0x6c, 0x6c, 0x73, 0x5f, 0x69, 0x64, 0x73, 0x22,
-	0x36, 0x0a, 0x1b, 0x47, 0x65, 0x74, 0x48, 0x61, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67,
-	0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x17,
-	0x0a, 0x06, 0x68, 0x61, 0x6c, 0x6c, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x07,
-	0x68, 0x61, 0x6c, 0x6c, 0x5f, 0x69, 0x64, 0x22, 0x69, 0x0a, 0x05, 0x50, 0x6c, 0x61, 0x63, 0x65,
-	0x12, 0x10, 0x0a, 0x03, 0x72, 0x6f, 0x77, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x03, 0x72,
-	0x6f, 0x77, 0x12, 0x12, 0x0a, 0x04, 0x73, 0x65, 0x61, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05,
-	0x52, 0x04, 0x73, 0x65, 0x61, 0x74, 0x12, 0x1c, 0x0a, 0x0a, 0x67, 0x72, 0x69, 0x64, 0x5f, 0x70,
-	0x6f, 0x73, 0x5f, 0x78, 0x18, 0x03, 0x20, 0x01, 0x28, 0x02, 0x52, 0x08, 0x67, 0x72, 0x69, 0x64,
-	0x50, 0x6f, 0x73, 0x58, 0x12, 0x1c, 0x0a, 0x0a, 0x67, 0x72, 0x69, 0x64, 0x5f, 0x70, 0x6f, 0x73,
-	0x5f, 0x79, 0x18, 0x04, 0x20, 0x01, 0x28, 0x02, 0x52, 0x08, 0x67, 0x72, 0x69, 0x64, 0x50, 0x6f,
-	0x73, 0x59, 0x22, 0x40, 0x0a, 0x11, 0x48, 0x61, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67,
-	0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x2b, 0x0a, 0x05, 0x70, 0x6c, 0x61, 0x63, 0x65,
-	0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x15, 0x2e, 0x63, 0x69, 0x6e, 0x65, 0x6d, 0x61, 0x5f,
-	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x50, 0x6c, 0x61, 0x63, 0x65, 0x52, 0x05, 0x70,
-	0x6c, 0x61, 0x63, 0x65, 0x22, 0x2d, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x43, 0x69, 0x6e, 0x65, 0x6d,
-	0x61, 0x48, 0x61, 0x6c, 0x6c, 0x73, 0x12, 0x1b, 0x0a, 0x08, 0x43, 0x69, 0x6e, 0x65, 0x6d, 0x61,
-	0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x09, 0x63, 0x69, 0x6e, 0x65, 0x6d, 0x61,
-	0x5f, 0x69, 0x64, 0x42, 0x1a, 0x5a, 0x18, 0x63, 0x69, 0x6e, 0x65, 0x6d, 0x61, 0x5f, 0x73, 0x65,
-	0x72, 0x76, 0x69, 0x63, 0x65, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x73, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0xc8, 0x01, 0x0a, 0x1a, 0x47, 0x65, 0x74, 0x53, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x69, 0x6e, 0x67,
+	0x73, 0x49, 0x6e, 0x43, 0x69, 0x74, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x17,
+	0x0a, 0x06, 0x63, 0x69, 0x74, 0x79, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x07,
+	0x63, 0x69, 0x74, 0x79, 0x5f, 0x69, 0x64, 0x12, 0x19, 0x0a, 0x07, 0x6d, 0x6f, 0x76, 0x69, 0x65,
+	0x49, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x6d, 0x6f, 0x76, 0x69, 0x65, 0x5f,
+	0x69, 0x64, 0x12, 0x3c, 0x0a, 0x0b, 0x73, 0x74, 0x61, 0x72, 0x74, 0x50, 0x65, 0x72, 0x69, 0x6f,
+	0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x69, 0x6e, 0x65, 0x6d, 0x61,
+	0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61,
+	0x6d, 0x70, 0x52, 0x0c, 0x73, 0x74, 0x61, 0x72, 0x74, 0x5f, 0x70, 0x65, 0x72, 0x69, 0x6f, 0x64,
+	0x12, 0x38, 0x0a, 0x09, 0x65, 0x6e, 0x64, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x18, 0x04, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x69, 0x6e, 0x65, 0x6d, 0x61, 0x5f, 0x73, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x0a,
+	0x65, 0x6e, 0x64, 0x5f, 0x70, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x22, 0x84, 0x02, 0x0a, 0x0d, 0x43,
+	0x69, 0x74, 0x79, 0x53, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x69, 0x6e, 0x67, 0x12, 0x21, 0x0a, 0x0b,
+	0x73, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x69, 0x6e, 0x67, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x03, 0x52, 0x0c, 0x73, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x69, 0x6e, 0x67, 0x5f, 0x69, 0x64, 0x12,
+	0x1c, 0x0a, 0x09, 0x63, 0x69, 0x6e, 0x65, 0x6d, 0x61, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x05, 0x52, 0x09, 0x63, 0x69, 0x6e, 0x65, 0x6d, 0x61, 0x5f, 0x69, 0x64, 0x12, 0x25, 0x0a,
+	0x0d, 0x73, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x69, 0x6e, 0x67, 0x54, 0x79, 0x70, 0x65, 0x18, 0x03,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x73, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x69, 0x6e, 0x67, 0x5f,
+	0x74, 0x79, 0x70, 0x65, 0x12, 0x38, 0x0a, 0x09, 0x73, 0x74, 0x61, 0x72, 0x74, 0x54, 0x69, 0x6d,
+	0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x69, 0x6e, 0x65, 0x6d, 0x61,
+	0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61,
+	0x6d, 0x70, 0x52, 0x0a, 0x73, 0x74, 0x61, 0x72, 0x74, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x12, 0x17,
+	0x0a, 0x06, 0x68, 0x61, 0x6c, 0x6c, 0x49, 0x44, 0x18, 0x05, 0x20, 0x01, 0x28, 0x05, 0x52, 0x07,
+	0x68, 0x61, 0x6c, 0x6c, 0x5f, 0x69, 0x64, 0x12, 0x38, 0x0a, 0x0b, 0x74, 0x69, 0x63, 0x6b, 0x65,
+	0x74, 0x50, 0x72, 0x69, 0x63, 0x65, 0x18, 0x06, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x15, 0x2e, 0x63,
+	0x69, 0x6e, 0x65, 0x6d, 0x61, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x50, 0x72,
+	0x69, 0x63, 0x65, 0x52, 0x0c, 0x74, 0x69, 0x63, 0x6b, 0x65, 0x74, 0x5f, 0x70, 0x72, 0x69, 0x63,
+	0x65, 0x22, 0x4f, 0x0a, 0x0e, 0x43, 0x69, 0x74, 0x79, 0x53, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x69,
+	0x6e, 0x67, 0x73, 0x12, 0x3d, 0x0a, 0x0a, 0x73, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x69, 0x6e, 0x67,
+	0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x63, 0x69, 0x6e, 0x65, 0x6d, 0x61,
+	0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x43, 0x69, 0x74, 0x79, 0x53, 0x63, 0x72,
+	0x65, 0x65, 0x6e, 0x69, 0x6e, 0x67, 0x52, 0x0a, 0x73, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x69, 0x6e,
+	0x67, 0x73, 0x22, 0x2e, 0x0a, 0x0f, 0x47, 0x65, 0x74, 0x48, 0x61, 0x6c, 0x6c, 0x73, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1b, 0x0a, 0x08, 0x68, 0x61, 0x6c, 0x6c, 0x73, 0x49, 0x64,
+	0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x68, 0x61, 0x6c, 0x6c, 0x73, 0x5f, 0x69,
+	0x64, 0x73, 0x22, 0x36, 0x0a, 0x1b, 0x47, 0x65, 0x74, 0x48, 0x61, 0x6c, 0x6c, 0x43, 0x6f, 0x6e,
+	0x66, 0x69, 0x67, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x12, 0x17, 0x0a, 0x06, 0x68, 0x61, 0x6c, 0x6c, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x05, 0x52, 0x07, 0x68, 0x61, 0x6c, 0x6c, 0x5f, 0x69, 0x64, 0x22, 0x69, 0x0a, 0x05, 0x50, 0x6c,
+	0x61, 0x63, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x72, 0x6f, 0x77, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05,
+	0x52, 0x03, 0x72, 0x6f, 0x77, 0x12, 0x12, 0x0a, 0x04, 0x73, 0x65, 0x61, 0x74, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x05, 0x52, 0x04, 0x73, 0x65, 0x61, 0x74, 0x12, 0x1c, 0x0a, 0x0a, 0x67, 0x72, 0x69,
+	0x64, 0x5f, 0x70, 0x6f, 0x73, 0x5f, 0x78, 0x18, 0x03, 0x20, 0x01, 0x28, 0x02, 0x52, 0x08, 0x67,
+	0x72, 0x69, 0x64, 0x50, 0x6f, 0x73, 0x58, 0x12, 0x1c, 0x0a, 0x0a, 0x67, 0x72, 0x69, 0x64, 0x5f,
+	0x70, 0x6f, 0x73, 0x5f, 0x79, 0x18, 0x04, 0x20, 0x01, 0x28, 0x02, 0x52, 0x08, 0x67, 0x72, 0x69,
+	0x64, 0x50, 0x6f, 0x73, 0x59, 0x22, 0x38, 0x0a, 0x13, 0x47, 0x65, 0x74, 0x53, 0x63, 0x72, 0x65,
+	0x65, 0x6e, 0x69, 0x6e, 0x67, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x21, 0x0a, 0x0b,
+	0x73, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x69, 0x6e, 0x67, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x05, 0x52, 0x0c, 0x73, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x69, 0x6e, 0x67, 0x5f, 0x69, 0x64, 0x22,
+	0xd4, 0x02, 0x0a, 0x14, 0x47, 0x65, 0x74, 0x53, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x69, 0x6e, 0x67,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1b, 0x0a, 0x08, 0x63, 0x69, 0x6e, 0x65,
+	0x6d, 0x61, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x09, 0x63, 0x69, 0x6e, 0x65,
+	0x6d, 0x61, 0x5f, 0x69, 0x64, 0x12, 0x19, 0x0a, 0x07, 0x6d, 0x6f, 0x76, 0x69, 0x65, 0x49, 0x64,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x6d, 0x6f, 0x76, 0x69, 0x65, 0x5f, 0x69, 0x64,
+	0x12, 0x25, 0x0a, 0x0d, 0x73, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x69, 0x6e, 0x67, 0x54, 0x79, 0x70,
+	0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x73, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x69,
+	0x6e, 0x67, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x12, 0x38, 0x0a, 0x09, 0x73, 0x74, 0x61, 0x72, 0x74,
+	0x54, 0x69, 0x6d, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x69, 0x6e,
+	0x65, 0x6d, 0x61, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x54, 0x69, 0x6d, 0x65,
+	0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x0a, 0x73, 0x74, 0x61, 0x72, 0x74, 0x5f, 0x74, 0x69, 0x6d,
+	0x65, 0x12, 0x17, 0x0a, 0x06, 0x68, 0x61, 0x6c, 0x6c, 0x49, 0x44, 0x18, 0x05, 0x20, 0x01, 0x28,
+	0x05, 0x52, 0x07, 0x68, 0x61, 0x6c, 0x6c, 0x5f, 0x69, 0x64, 0x12, 0x38, 0x0a, 0x0b, 0x74, 0x69,
+	0x63, 0x6b, 0x65, 0x74, 0x50, 0x72, 0x69, 0x63, 0x65, 0x18, 0x06, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x15, 0x2e, 0x63, 0x69, 0x6e, 0x65, 0x6d, 0x61, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x2e, 0x50, 0x72, 0x69, 0x63, 0x65, 0x52, 0x0c, 0x74, 0x69, 0x63, 0x6b, 0x65, 0x74, 0x5f, 0x70,
+	0x72, 0x69, 0x63, 0x65, 0x12, 0x50, 0x0a, 0x11, 0x68, 0x61, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x66,
+	0x69, 0x67, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x07, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x21, 0x2e, 0x63, 0x69, 0x6e, 0x65, 0x6d, 0x61, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x2e, 0x48, 0x61, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x75, 0x72, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x52, 0x12, 0x68, 0x61, 0x6c, 0x6c, 0x5f, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x75,
+	0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x40, 0x0a, 0x11, 0x48, 0x61, 0x6c, 0x6c, 0x43, 0x6f,
+	0x6e, 0x66, 0x69, 0x67, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x2b, 0x0a, 0x05, 0x70,
+	0x6c, 0x61, 0x63, 0x65, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x15, 0x2e, 0x63, 0x69, 0x6e,
+	0x65, 0x6d, 0x61, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x50, 0x6c, 0x61, 0x63,
+	0x65, 0x52, 0x05, 0x70, 0x6c, 0x61, 0x63, 0x65, 0x22, 0x2d, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x43,
+	0x69, 0x6e, 0x65, 0x6d, 0x61, 0x48, 0x61, 0x6c, 0x6c, 0x73, 0x12, 0x1b, 0x0a, 0x08, 0x43, 0x69,
+	0x6e, 0x65, 0x6d, 0x61, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x09, 0x63, 0x69,
+	0x6e, 0x65, 0x6d, 0x61, 0x5f, 0x69, 0x64, 0x42, 0x1a, 0x5a, 0x18, 0x63, 0x69, 0x6e, 0x65, 0x6d,
+	0x61, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1467,7 +1873,7 @@ func file_cinema_service_v1_messages_proto_rawDescGZIP() []byte {
 	return file_cinema_service_v1_messages_proto_rawDescData
 }
 
-var file_cinema_service_v1_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
+var file_cinema_service_v1_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
 var file_cinema_service_v1_messages_proto_goTypes = []interface{}{
 	(*Timestamp)(nil),                          // 0: cinema_service.Timestamp
 	(*GetMoviesScreeningsRequest)(nil),         // 1: cinema_service.GetMoviesScreeningsRequest
@@ -1487,11 +1893,16 @@ var file_cinema_service_v1_messages_proto_goTypes = []interface{}{
 	(*Hall)(nil),                               // 15: cinema_service.Hall
 	(*Halls)(nil),                              // 16: cinema_service.Halls
 	(*GetCinemaRequest)(nil),                   // 17: cinema_service.GetCinemaRequest
-	(*GetHallsRequest)(nil),                    // 18: cinema_service.GetHallsRequest
-	(*GetHallConfigurationRequest)(nil),        // 19: cinema_service.GetHallConfigurationRequest
-	(*Place)(nil),                              // 20: cinema_service.Place
-	(*HallConfiguration)(nil),                  // 21: cinema_service.HallConfiguration
-	(*GetCinemaHalls)(nil),                     // 22: cinema_service.GetCinemaHalls
+	(*GetScreeningsInCityRequest)(nil),         // 18: cinema_service.GetScreeningsInCityRequest
+	(*CityScreening)(nil),                      // 19: cinema_service.CityScreening
+	(*CityScreenings)(nil),                     // 20: cinema_service.CityScreenings
+	(*GetHallsRequest)(nil),                    // 21: cinema_service.GetHallsRequest
+	(*GetHallConfigurationRequest)(nil),        // 22: cinema_service.GetHallConfigurationRequest
+	(*Place)(nil),                              // 23: cinema_service.Place
+	(*GetScreeningRequest)(nil),                // 24: cinema_service.GetScreeningRequest
+	(*GetScreeningResponse)(nil),               // 25: cinema_service.GetScreeningResponse
+	(*HallConfiguration)(nil),                  // 26: cinema_service.HallConfiguration
+	(*GetCinemaHalls)(nil),                     // 27: cinema_service.GetCinemaHalls
 }
 var file_cinema_service_v1_messages_proto_depIdxs = []int32{
 	0,  // 0: cinema_service.GetMoviesScreeningsRequest.startPeriod:type_name -> cinema_service.Timestamp
@@ -1508,12 +1919,20 @@ var file_cinema_service_v1_messages_proto_depIdxs = []int32{
 	11, // 11: cinema_service.Cinemas.cinemas:type_name -> cinema_service.Cinema
 	13, // 12: cinema_service.Cities.cities:type_name -> cinema_service.City
 	15, // 13: cinema_service.Halls.halls:type_name -> cinema_service.Hall
-	20, // 14: cinema_service.HallConfiguration.place:type_name -> cinema_service.Place
-	15, // [15:15] is the sub-list for method output_type
-	15, // [15:15] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	0,  // 14: cinema_service.GetScreeningsInCityRequest.startPeriod:type_name -> cinema_service.Timestamp
+	0,  // 15: cinema_service.GetScreeningsInCityRequest.endPeriod:type_name -> cinema_service.Timestamp
+	0,  // 16: cinema_service.CityScreening.startTime:type_name -> cinema_service.Timestamp
+	3,  // 17: cinema_service.CityScreening.ticketPrice:type_name -> cinema_service.Price
+	19, // 18: cinema_service.CityScreenings.screenings:type_name -> cinema_service.CityScreening
+	0,  // 19: cinema_service.GetScreeningResponse.startTime:type_name -> cinema_service.Timestamp
+	3,  // 20: cinema_service.GetScreeningResponse.ticketPrice:type_name -> cinema_service.Price
+	26, // 21: cinema_service.GetScreeningResponse.hallConfiguration:type_name -> cinema_service.HallConfiguration
+	23, // 22: cinema_service.HallConfiguration.place:type_name -> cinema_service.Place
+	23, // [23:23] is the sub-list for method output_type
+	23, // [23:23] is the sub-list for method input_type
+	23, // [23:23] is the sub-list for extension type_name
+	23, // [23:23] is the sub-list for extension extendee
+	0,  // [0:23] is the sub-list for field type_name
 }
 
 func init() { file_cinema_service_v1_messages_proto_init() }
@@ -1739,7 +2158,7 @@ func file_cinema_service_v1_messages_proto_init() {
 			}
 		}
 		file_cinema_service_v1_messages_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetHallsRequest); i {
+			switch v := v.(*GetScreeningsInCityRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1751,7 +2170,7 @@ func file_cinema_service_v1_messages_proto_init() {
 			}
 		}
 		file_cinema_service_v1_messages_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetHallConfigurationRequest); i {
+			switch v := v.(*CityScreening); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1763,7 +2182,7 @@ func file_cinema_service_v1_messages_proto_init() {
 			}
 		}
 		file_cinema_service_v1_messages_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Place); i {
+			switch v := v.(*CityScreenings); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1775,7 +2194,7 @@ func file_cinema_service_v1_messages_proto_init() {
 			}
 		}
 		file_cinema_service_v1_messages_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*HallConfiguration); i {
+			switch v := v.(*GetHallsRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1787,6 +2206,66 @@ func file_cinema_service_v1_messages_proto_init() {
 			}
 		}
 		file_cinema_service_v1_messages_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetHallConfigurationRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_cinema_service_v1_messages_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Place); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_cinema_service_v1_messages_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetScreeningRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_cinema_service_v1_messages_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetScreeningResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_cinema_service_v1_messages_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*HallConfiguration); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_cinema_service_v1_messages_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetCinemaHalls); i {
 			case 0:
 				return &v.state
@@ -1806,7 +2285,7 @@ func file_cinema_service_v1_messages_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_cinema_service_v1_messages_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   23,
+			NumMessages:   28,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

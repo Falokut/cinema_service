@@ -27,27 +27,31 @@ type CinemaRepository interface {
 		startPeriod, endPeriod time.Time) (*cinema_service.PreviewScreenings, error)
 	GetScreenings(ctx context.Context, cinemaID, movieID int32,
 		startPeriod, endPeriod time.Time) (*cinema_service.Screenings, error)
+	GetCityScreenings(ctx context.Context, cityID, movieID int32,
+		startPeriod, endPeriod time.Time) (*cinema_service.CityScreenings, error)
 	GetCinemasCities(ctx context.Context) (*cinema_service.Cities, error)
 	GetCinema(ctx context.Context, id int32) (*cinema_service.Cinema, error)
 	GetHallConfiguraion(ctx context.Context, id int32) (*cinema_service.HallConfiguration, error)
 	GetHalls(ctx context.Context, ids []int32) (*cinema_service.Halls, error)
+
+	GetScreening(ctx context.Context, id int32) (*cinema_service.GetScreeningResponse, error)
 }
 
-type cinemaService struct {
+type CinemaService struct {
 	cinema_service.UnimplementedCinemaServiceV1Server
 	logger       *logrus.Logger
 	cinemaRepo   CinemaRepository
 	errorHandler errorHandler
 }
 
-func NewCinemaService(logger *logrus.Logger, cinemaRepo CinemaRepository) *cinemaService {
+func NewCinemaService(logger *logrus.Logger, cinemaRepo CinemaRepository) *CinemaService {
 	errorHandler := newErrorHandler(logger)
-	return &cinemaService{logger: logger, errorHandler: errorHandler, cinemaRepo: cinemaRepo}
+	return &CinemaService{logger: logger, errorHandler: errorHandler, cinemaRepo: cinemaRepo}
 }
 
-func (s *cinemaService) GetCinemasInCity(ctx context.Context,
+func (s *CinemaService) GetCinemasInCity(ctx context.Context,
 	in *cinema_service.GetCinemasInCityRequest) (*cinema_service.Cinemas, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaService.GetCinemasInCity")
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaService.GetCinemasInCity")
 	defer span.Finish()
 
 	res, err := s.cinemaRepo.GetCinemasInCity(ctx, in.CityId)
@@ -65,9 +69,9 @@ func (s *cinemaService) GetCinemasInCity(ctx context.Context,
 	return res, nil
 }
 
-func (s *cinemaService) GetMoviesScreenings(ctx context.Context,
+func (s *CinemaService) GetMoviesScreenings(ctx context.Context,
 	in *cinema_service.GetMoviesScreeningsRequest) (*cinema_service.PreviewScreenings, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaService.GetMoviesScreenings")
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaService.GetMoviesScreenings")
 	defer span.Finish()
 
 	start, end, err := parsePeriods(in.StartPeriod, in.EndPeriod)
@@ -85,9 +89,9 @@ func (s *cinemaService) GetMoviesScreenings(ctx context.Context,
 	return res, nil
 }
 
-func (s *cinemaService) GetMoviesScreeningsInCities(ctx context.Context,
+func (s *CinemaService) GetMoviesScreeningsInCities(ctx context.Context,
 	in *cinema_service.GetMoviesScreeningsInCitiesRequest) (*cinema_service.PreviewScreenings, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaService.GetMoviesScreeningsInCities")
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaService.GetMoviesScreeningsInCities")
 	defer span.Finish()
 
 	start, end, err := parsePeriods(in.StartPeriod, in.EndPeriod)
@@ -127,9 +131,9 @@ func convertStringsSlice(str []string) []int32 {
 	return nums
 }
 
-func (s *cinemaService) GetScreenings(ctx context.Context,
+func (s *CinemaService) GetScreenings(ctx context.Context,
 	in *cinema_service.GetScreeningsRequest) (*cinema_service.Screenings, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaService.GetScreenings")
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaService.GetScreenings")
 	defer span.Finish()
 	start, end, err := parsePeriods(in.StartPeriod, in.EndPeriod)
 	if err != nil {
@@ -147,9 +151,45 @@ func (s *cinemaService) GetScreenings(ctx context.Context,
 	return res, nil
 }
 
-func (s *cinemaService) GetCinemasCities(ctx context.Context,
+func (s *CinemaService) GetScreeningsInCity(ctx context.Context,
+	in *cinema_service.GetScreeningsInCityRequest) (*cinema_service.CityScreenings, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaService.GetScreeningsInCity")
+	defer span.Finish()
+	start, end, err := parsePeriods(in.StartPeriod, in.EndPeriod)
+	if err != nil {
+		return nil, s.errorHandler.createErrorResponceWithSpan(span, ErrInvalidArgument, err.Error())
+	}
+
+	res, err := s.cinemaRepo.GetCityScreenings(ctx, in.CityId, in.MovieId, start, end)
+	if err != nil {
+		ext.LogError(span, err)
+		span.SetTag("grpc.status", status.Code(err))
+		return nil, err
+	}
+
+	span.SetTag("grpc.status", codes.OK)
+	return res, nil
+}
+
+func (s *CinemaService) GetScreening(ctx context.Context,
+	in *cinema_service.GetScreeningRequest) (*cinema_service.GetScreeningResponse, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaService.GetScreening")
+	defer span.Finish()
+
+	res, err := s.cinemaRepo.GetScreening(ctx, in.ScreeningId)
+	if err != nil {
+		ext.LogError(span, err)
+		span.SetTag("grpc.status", status.Code(err))
+		return nil, err
+	}
+
+	span.SetTag("grpc.status", codes.OK)
+	return res, nil
+}
+
+func (s *CinemaService) GetCinemasCities(ctx context.Context,
 	in *emptypb.Empty) (*cinema_service.Cities, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaService.GetCinemasCities")
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaService.GetCinemasCities")
 	defer span.Finish()
 
 	res, err := s.cinemaRepo.GetCinemasCities(ctx)
@@ -162,9 +202,9 @@ func (s *cinemaService) GetCinemasCities(ctx context.Context,
 	return res, nil
 }
 
-func (s *cinemaService) GetHallConfiguration(ctx context.Context,
+func (s *CinemaService) GetHallConfiguration(ctx context.Context,
 	in *cinema_service.GetHallConfigurationRequest) (*cinema_service.HallConfiguration, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaService.GetHallConfiguration")
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaService.GetHallConfiguration")
 	defer span.Finish()
 	res, err := s.cinemaRepo.GetHallConfiguraion(ctx, in.HallId)
 	if err != nil {
@@ -176,9 +216,9 @@ func (s *cinemaService) GetHallConfiguration(ctx context.Context,
 	return res, nil
 }
 
-func (s *cinemaService) GetCinema(ctx context.Context,
+func (s *CinemaService) GetCinema(ctx context.Context,
 	in *cinema_service.GetCinemaRequest) (*cinema_service.Cinema, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaService.GetCinema")
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaService.GetCinema")
 	defer span.Finish()
 
 	cinema, err := s.cinemaRepo.GetCinema(ctx, in.CinemaId)
@@ -191,9 +231,9 @@ func (s *cinemaService) GetCinema(ctx context.Context,
 	span.SetTag("grpc.status", codes.OK)
 	return cinema, nil
 }
-func (s *cinemaService) GetHalls(ctx context.Context,
+func (s *CinemaService) GetHalls(ctx context.Context,
 	in *cinema_service.GetHallsRequest) (*cinema_service.Halls, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaService.GetHalls")
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaService.GetHalls")
 	defer span.Finish()
 
 	in.HallsIds = strings.ReplaceAll(in.HallsIds, `"`, "")

@@ -154,6 +154,58 @@ func local_request_CinemaServiceV1_GetCinema_0(ctx context.Context, marshaler ru
 
 }
 
+func request_CinemaServiceV1_GetScreening_0(ctx context.Context, marshaler runtime.Marshaler, client CinemaServiceV1Client, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetScreeningRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["screeningId"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "screeningId")
+	}
+
+	protoReq.ScreeningId, err = runtime.Int32(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "screeningId", err)
+	}
+
+	msg, err := client.GetScreening(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_CinemaServiceV1_GetScreening_0(ctx context.Context, marshaler runtime.Marshaler, server CinemaServiceV1Server, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetScreeningRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["screeningId"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "screeningId")
+	}
+
+	protoReq.ScreeningId, err = runtime.Int32(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "screeningId", err)
+	}
+
+	msg, err := server.GetScreening(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
 var (
 	filter_CinemaServiceV1_GetMoviesScreenings_0 = &utilities.DoubleArray{Encoding: map[string]int{"cinemaId": 0, "cinema_id": 1}, Base: []int{1, 1, 2, 0, 0}, Check: []int{0, 1, 1, 2, 3}}
 )
@@ -256,6 +308,76 @@ func local_request_CinemaServiceV1_GetMoviesScreeningsInCities_0(ctx context.Con
 	}
 
 	msg, err := server.GetMoviesScreeningsInCities(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
+var (
+	filter_CinemaServiceV1_GetScreeningsInCity_0 = &utilities.DoubleArray{Encoding: map[string]int{"cityId": 0, "city_id": 1}, Base: []int{1, 1, 2, 0, 0}, Check: []int{0, 1, 1, 2, 3}}
+)
+
+func request_CinemaServiceV1_GetScreeningsInCity_0(ctx context.Context, marshaler runtime.Marshaler, client CinemaServiceV1Client, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetScreeningsInCityRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["cityId"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cityId")
+	}
+
+	protoReq.CityId, err = runtime.Int32(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cityId", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_CinemaServiceV1_GetScreeningsInCity_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.GetScreeningsInCity(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_CinemaServiceV1_GetScreeningsInCity_0(ctx context.Context, marshaler runtime.Marshaler, server CinemaServiceV1Server, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetScreeningsInCityRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["cityId"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cityId")
+	}
+
+	protoReq.CityId, err = runtime.Int32(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cityId", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_CinemaServiceV1_GetScreeningsInCity_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := server.GetScreeningsInCity(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -499,6 +621,31 @@ func RegisterCinemaServiceV1HandlerServer(ctx context.Context, mux *runtime.Serv
 
 	})
 
+	mux.Handle("GET", pattern_CinemaServiceV1_GetScreening_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetScreening", runtime.WithHTTPPathPattern("/v1/screenings/{screeningId}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_CinemaServiceV1_GetScreening_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_CinemaServiceV1_GetScreening_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	mux.Handle("GET", pattern_CinemaServiceV1_GetMoviesScreenings_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -546,6 +693,31 @@ func RegisterCinemaServiceV1HandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 
 		forward_CinemaServiceV1_GetMoviesScreeningsInCities_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("GET", pattern_CinemaServiceV1_GetScreeningsInCity_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetScreeningsInCity", runtime.WithHTTPPathPattern("/v1/city/{cityId}/screenings"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_CinemaServiceV1_GetScreeningsInCity_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_CinemaServiceV1_GetScreeningsInCity_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -731,6 +903,28 @@ func RegisterCinemaServiceV1HandlerClient(ctx context.Context, mux *runtime.Serv
 
 	})
 
+	mux.Handle("GET", pattern_CinemaServiceV1_GetScreening_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetScreening", runtime.WithHTTPPathPattern("/v1/screenings/{screeningId}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_CinemaServiceV1_GetScreening_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_CinemaServiceV1_GetScreening_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	mux.Handle("GET", pattern_CinemaServiceV1_GetMoviesScreenings_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -772,6 +966,28 @@ func RegisterCinemaServiceV1HandlerClient(ctx context.Context, mux *runtime.Serv
 		}
 
 		forward_CinemaServiceV1_GetMoviesScreeningsInCities_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("GET", pattern_CinemaServiceV1_GetScreeningsInCity_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetScreeningsInCity", runtime.WithHTTPPathPattern("/v1/city/{cityId}/screenings"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_CinemaServiceV1_GetScreeningsInCity_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_CinemaServiceV1_GetScreeningsInCity_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -851,9 +1067,13 @@ var (
 
 	pattern_CinemaServiceV1_GetCinema_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "cinema", "cinemaId"}, ""))
 
+	pattern_CinemaServiceV1_GetScreening_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "screenings", "screeningId"}, ""))
+
 	pattern_CinemaServiceV1_GetMoviesScreenings_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 2, 4}, []string{"v1", "cinema", "cinemaId", "screenings", "movies"}, ""))
 
 	pattern_CinemaServiceV1_GetMoviesScreeningsInCities_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "screenings", "movies"}, ""))
+
+	pattern_CinemaServiceV1_GetScreeningsInCity_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "city", "cityId", "screenings"}, ""))
 
 	pattern_CinemaServiceV1_GetHalls_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "halls"}, ""))
 
@@ -869,9 +1089,13 @@ var (
 
 	forward_CinemaServiceV1_GetCinema_0 = runtime.ForwardResponseMessage
 
+	forward_CinemaServiceV1_GetScreening_0 = runtime.ForwardResponseMessage
+
 	forward_CinemaServiceV1_GetMoviesScreenings_0 = runtime.ForwardResponseMessage
 
 	forward_CinemaServiceV1_GetMoviesScreeningsInCities_0 = runtime.ForwardResponseMessage
+
+	forward_CinemaServiceV1_GetScreeningsInCity_0 = runtime.ForwardResponseMessage
 
 	forward_CinemaServiceV1_GetHalls_0 = runtime.ForwardResponseMessage
 

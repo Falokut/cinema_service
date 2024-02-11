@@ -186,8 +186,34 @@ func (r *cinemaRepository) GetMoviesScreeningsInCities(ctx context.Context,
 
 	return res, nil
 }
+
+func (r *cinemaRepository) GetCityScreenings(ctx context.Context,
+	cityId, movieId int32, startPeriod, endPeriod time.Time) ([]CityScreening, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaRepository.GetCityScreenings")
+	defer span.Finish()
+	var err error
+	defer span.SetTag("error", err != nil)
+
+	query := fmt.Sprintf(`
+			SELECT %[1]s.id, %[2]s.name AS screening_type, hall_id, ticket_price,start_time, cinema_id 
+			FROM %[1]s JOIN %[2]s ON screening_type_id=%[2]s.id 
+			JOIN %[3]s ON hall_id = %[3]s.id 
+			JOIN %[4]s ON cinema_id = %[4]s.id 
+			WHERE city_id=$1 AND movie_id=$2 AND start_time>=$3 AND start_time<=$4 
+			ORDER BY start_time;`,
+		screeningsTableName, screeningTypeTableName, hallsTableName, cinemasTableName)
+
+	var screenings []CityScreening
+	err = r.db.SelectContext(ctx, &screenings, query, cityId, movieId, startPeriod, endPeriod)
+	if err != nil {
+		r.logger.Errorf("err: %v query: %s", err.Error(), query)
+		return []CityScreening{}, err
+	}
+
+	return screenings, nil
+}
 func (r *cinemaRepository) GetScreenings(ctx context.Context,
-	cinemaID, movieID int32, startPeriod, endPeriod time.Time) ([]Screening, error) {
+	cinemaID, movieID int32, startPeriod, endPeriod time.Time) (Screenings, error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaRepository.GetScreenings")
 	defer span.Finish()
 	var err error
@@ -197,18 +223,44 @@ func (r *cinemaRepository) GetScreenings(ctx context.Context,
 		SELECT %[1]s.id, movie_id, %[2]s.name AS screening_type, hall_id, ticket_price,start_time
 		FROM %[1]s JOIN %[2]s ON screening_type_id=%[2]s.id 
 		WHERE hall_id=ANY(SELECT id FROM %[3]s WHERE cinema_id=$1) AND movie_id=$2 AND start_time>=$3 AND start_time<=$4
-		ORDER BY start_time`,
+		ORDER BY start_time;`,
 		screeningsTableName, screeningTypeTableName, hallsTableName)
 
-	var screenings []Screening
+	var screenings []screening
 	err = r.db.SelectContext(ctx, &screenings, query, cinemaID, movieID, startPeriod, endPeriod)
 	if err != nil {
 		r.logger.Errorf("err: %v query: %s", err.Error(), query)
-		return []Screening{}, err
+		return Screenings{}, err
 	}
 
-	return screenings, nil
+	return Screenings{Screenings: screenings}, nil
 }
+
+func (r *cinemaRepository) GetScreening(ctx context.Context, id int32) (Screening, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaRepository.GetScreening")
+	defer span.Finish()
+	var err error
+	defer span.SetTag("error", err != nil)
+
+	query := fmt.Sprintf(`
+	SELECT  %[2]s.name AS screening_type,hall_id,ticket_price,start_time,cinema_id,movie_id 
+	FROM %[1]s JOIN %[2]s ON screening_type_id=%[2]s.id 
+	JOIN %[3]s ON hall_id = %[3]s.id 
+	WHERE %[1]s.id=$1;`, screeningsTableName, screeningTypeTableName, hallsTableName)
+
+	var screening Screening
+	err = r.db.GetContext(ctx, &screening, query, id)
+	if errors.Is(err, sql.ErrNoRows) {
+		return Screening{}, ErrNotFound
+	}
+	if err != nil {
+		r.logger.Errorf("err: %v query: %s", err.Error(), query)
+		return Screening{}, err
+	}
+
+	return screening, nil
+}
+
 func (r *cinemaRepository) GetCinema(ctx context.Context, id int32) (Cinema, error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaRepository.GetCinema")
 	defer span.Finish()

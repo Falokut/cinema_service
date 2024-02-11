@@ -278,6 +278,75 @@
         ]
       }
     },
+    "/v1/city/{city_id}/screenings": {
+      "get": {
+        "summary": "Returns screenings in the cinema screenings in specified city with specified movie_id.",
+        "operationId": "cinemaServiceV1_GetScreeningsInCity",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/cinema_serviceCityScreenings"
+            }
+          },
+          "400": {
+            "description": "Returned when specified start_period or end_period is not valid.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "500": {
+            "description": "Something went wrong.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "city_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "movie_id",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "start_period.formatted_timestamp",
+            "description": "Time in format RFC3339, time must be in UTC\nexample: 2023-11-10T23:00:00Z",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "end_period.formatted_timestamp",
+            "description": "Time in format RFC3339, time must be in UTC\nexample: 2023-11-10T23:00:00Z",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "cinemaServiceV1"
+        ]
+      }
+    },
     "/v1/hall/{hall_id}/configuration": {
       "get": {
         "summary": "Returns the configuration of the hall.",
@@ -427,6 +496,50 @@
           "cinemaServiceV1"
         ]
       }
+    },
+    "/v1/screenings/{screening_id}": {
+      "get": {
+        "summary": "Returns info about screening.",
+        "operationId": "cinemaServiceV1_GetScreening",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/cinema_serviceGetScreeningResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "500": {
+            "description": "Something went wrong.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "screening_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "cinemaServiceV1"
+        ]
+      }
     }
   },
   "definitions": {
@@ -484,6 +597,44 @@
         }
       }
     },
+    "cinema_serviceCityScreening": {
+      "type": "object",
+      "properties": {
+        "screening_id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "cinema_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "screening_type": {
+          "type": "string"
+        },
+        "start_time": {
+          "$ref": "#/definitions/cinema_serviceTimestamp"
+        },
+        "hall_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "ticket_price": {
+          "$ref": "#/definitions/cinema_servicePrice"
+        }
+      }
+    },
+    "cinema_serviceCityScreenings": {
+      "type": "object",
+      "properties": {
+        "screenings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/cinema_serviceCityScreening"
+          }
+        }
+      }
+    },
     "cinema_serviceCoordinates": {
       "type": "object",
       "properties": {
@@ -494,6 +645,35 @@
         "longitude": {
           "type": "number",
           "format": "double"
+        }
+      }
+    },
+    "cinema_serviceGetScreeningResponse": {
+      "type": "object",
+      "properties": {
+        "cinema_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "movie_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "screening_type": {
+          "type": "string"
+        },
+        "start_time": {
+          "$ref": "#/definitions/cinema_serviceTimestamp"
+        },
+        "hall_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "ticket_price": {
+          "$ref": "#/definitions/cinema_servicePrice"
+        },
+        "hall_configuration": {
+          "$ref": "#/definitions/cinema_serviceHallConfiguration"
         }
       }
     },

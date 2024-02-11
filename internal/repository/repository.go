@@ -77,9 +77,9 @@ type Screening struct {
 	ScreeningType string    `json:"screening_type" db:"screening_type"`
 	TicketPrice   string    `json:"ticket_price" db:"ticket_price"`
 	StartTime     time.Time `json:"start_time" db:"start_time"`
-	ScreeningID   int64     `json:"id" db:"id"`
-	HallID        int32     `json:"hall_id" db:"hall_id"`
-	MovieID       int32     `json:"movie_id" db:"movie_id"`
+	HallId        int32     `json:"hall_id" db:"hall_id"`
+	MovieId       int32     `json:"movie_id" db:"movie_id"`
+	CinemaId      int32     `json:"cinema_id" db:"cinema_id"`
 }
 
 type Place struct {
@@ -89,7 +89,30 @@ type Place struct {
 	GridPosY float32 `json:"grid_pos_y" db:"grid_pos_y"`
 }
 
+type CityScreening struct {
+	ScreeningType string    `json:"screening_type" db:"screening_type"`
+	TicketPrice   string    `json:"ticket_price" db:"ticket_price"`
+	StartTime     time.Time `json:"start_time" db:"start_time"`
+	ScreeningId   int64     `json:"id" db:"id"`
+	HallId        int32     `json:"hall_id" db:"hall_id"`
+	CinemaId      int32     `json:"cinema_id" db:"cinema_id"`
+}
+
+type screening struct {
+	ScreeningType string    `json:"screening_type" db:"screening_type"`
+	TicketPrice   string    `json:"ticket_price" db:"ticket_price"`
+	StartTime     time.Time `json:"start_time" db:"start_time"`
+	ScreeningID   int64     `json:"id" db:"id"`
+	HallID        int32     `json:"hall_id" db:"hall_id"`
+	MovieID       int32     `json:"movie_id" db:"movie_id"`
+}
+
+type Screenings struct {
+	Screenings []screening
+}
+
 type CinemaRepository interface {
+	GetScreening(ctx context.Context, id int32) (Screening, error)
 	// Returns cinemas in the city.
 	GetCinemasInCity(ctx context.Context, id int32) ([]Cinema, error)
 
@@ -99,6 +122,9 @@ type CinemaRepository interface {
 	// Returns all movies that are in the cinema screenings in a particular cinema.
 	GetMoviesScreenings(ctx context.Context, cinemaID int32, startPeriod, endPeriod time.Time) ([]MoviesScreenings, error)
 
+	// Returns all screenings for a movie in a specific city.
+	GetCityScreenings(ctx context.Context, cityId, movieId int32, startPeriod, endPeriod time.Time) ([]CityScreening, error)
+
 	// Returns all movies that are in the cinema screenings.
 	GetAllMoviesScreenings(ctx context.Context, startPeriod, endPeriod time.Time) ([]MoviesScreenings, error)
 
@@ -106,7 +132,7 @@ type CinemaRepository interface {
 	GetMoviesScreeningsInCities(ctx context.Context, citiesIds []int32, startPeriod, endPeriod time.Time) ([]MoviesScreenings, error)
 
 	//Returns all screenings for a movie in a specific cinema.
-	GetScreenings(ctx context.Context, cinemaID, movieID int32, startPeriod, endPeriod time.Time) ([]Screening, error)
+	GetScreenings(ctx context.Context, cinemaID, movieID int32, startPeriod, endPeriod time.Time) (Screenings, error)
 
 	// Returns the configuration of the hall.
 	GetHallConfiguraion(ctx context.Context, id int32) ([]Place, error)

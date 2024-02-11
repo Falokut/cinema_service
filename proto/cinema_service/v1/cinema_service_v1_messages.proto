@@ -90,6 +90,26 @@ message GetCinemaRequest {
   int32 cinemaId = 1;
 }
 
+message GetScreeningsInCityRequest {
+  int32 cityId =1[json_name="city_id"];
+  int32 movieId = 2[json_name="movie_id"]; 
+  Timestamp startPeriod = 3 [ json_name = "start_period" ];
+  Timestamp endPeriod = 4 [ json_name = "end_period" ];
+}
+
+message CityScreening {
+  int64 screeningId = 1 [ json_name = "screening_id" ];
+  int32  cinema_id = 2 [ json_name = "cinema_id" ];
+  string screeningType = 3 [ json_name = "screening_type" ];
+  Timestamp startTime = 4 [ json_name = "start_time" ];
+  int32 hallID = 5 [ json_name = "hall_id" ];
+  Price ticketPrice = 6 [ json_name = "ticket_price" ];
+}
+
+message CityScreenings {
+  repeated CityScreening screenings = 1;
+}
+
 message GetHallsRequest {
   // for multiple values use ',' separator
   string hallsIds = 1 [ json_name = "halls_ids" ]; 
@@ -103,6 +123,20 @@ message Place {
   int32 seat = 2;
   float grid_pos_x = 3;
   float grid_pos_y = 4;
+}
+
+message GetScreeningRequest {
+  int32 screeningId = 1[json_name="screening_id"];
+}
+
+message GetScreeningResponse {
+  int32 cinemaId = 1[json_name="cinema_id"];
+  int32 movieId = 2 [ json_name = "movie_id" ];
+  string screeningType = 3 [ json_name = "screening_type" ];
+  Timestamp startTime = 4 [ json_name = "start_time" ];
+  int32 hallID = 5 [ json_name = "hall_id" ];
+  Price ticketPrice = 6 [ json_name = "ticket_price" ];
+  HallConfiguration hallConfiguration = 7[json_name="hall_configuration"];
 }
 
 message HallConfiguration { repeated Place place = 1; }

@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -169,13 +170,13 @@ func (w *cinemaRepositoryWrapper) GetScreenings(ctx context.Context, cinemaID, m
 	if err != nil {
 		return nil, w.createErrorResponceWithSpan(span, ErrInternal, err.Error())
 	}
-	if len(screenings) == 0 {
+	if len(screenings.Screenings) == 0 {
 		return nil, w.createErrorResponceWithSpan(span, ErrNotFound, "")
 	}
 
 	res := &cinema_service.Screenings{}
-	res.Screenings = make([]*cinema_service.Screening, len(screenings))
-	for i, screening := range screenings {
+	res.Screenings = make([]*cinema_service.Screening, len(screenings.Screenings))
+	for i, screening := range screenings.Screenings {
 		res.Screenings[i] = &cinema_service.Screening{
 			ScreeningID:   screening.ScreeningID,
 			ScreeningType: screening.ScreeningType,
@@ -186,6 +187,65 @@ func (w *cinemaRepositoryWrapper) GetScreenings(ctx context.Context, cinemaID, m
 		}
 	}
 
+	return res, nil
+}
+
+func (w *cinemaRepositoryWrapper) GetCityScreenings(ctx context.Context, cityID, movieID int32,
+	startPeriod, endPeriod time.Time) (*cinema_service.CityScreenings, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx,
+		"cinemaRepositoryWrapper.GetCityScreenings")
+	defer span.Finish()
+
+	screenings, err := w.repo.GetCityScreenings(ctx, cityID, movieID,
+		startPeriod, endPeriod)
+	if err != nil {
+		return nil, w.createErrorResponceWithSpan(span, ErrInternal, err.Error())
+	}
+	if len(screenings) == 0 {
+		return nil, w.createErrorResponceWithSpan(span, ErrNotFound, "")
+	}
+
+	res := &cinema_service.CityScreenings{}
+	res.Screenings = make([]*cinema_service.CityScreening, len(screenings))
+	for i, screening := range screenings {
+		res.Screenings[i] = &cinema_service.CityScreening{
+			ScreeningId:   screening.ScreeningId,
+			CinemaId:      screening.CinemaId,
+			ScreeningType: screening.ScreeningType,
+			HallID:        screening.HallId,
+			StartTime:     &cinema_service.Timestamp{FormattedTimestamp: screening.StartTime.Format(time.RFC3339)},
+			TicketPrice:   priceFromFloat(screening.TicketPrice),
+		}
+	}
+
+	return res, nil
+}
+
+func (w *cinemaRepositoryWrapper) GetScreening(ctx context.Context, id int32) (*cinema_service.GetScreeningResponse, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaRepositoryWrapper.GetScreening")
+	defer span.Finish()
+
+	screening, err := w.repo.GetScreening(ctx, id)
+	if errors.Is(err, repository.ErrNotFound) {
+		return nil, w.createErrorResponceWithSpan(span, ErrNotFound, fmt.Sprintf("screening with %d id not found", id))
+	}
+	if err != nil {
+		return nil, w.createErrorResponceWithSpan(span, ErrInternal, err.Error())
+	}
+
+	res := &cinema_service.GetScreeningResponse{
+		ScreeningType: screening.ScreeningType,
+		CinemaId:      screening.CinemaId,
+		MovieId:       screening.MovieId,
+		HallID:        screening.HallId,
+		StartTime:     &cinema_service.Timestamp{FormattedTimestamp: screening.StartTime.Format(time.RFC3339)},
+		TicketPrice:   priceFromFloat(screening.TicketPrice),
+	}
+
+	res.HallConfiguration, err = w.GetHallConfiguraion(ctx, res.HallID)
+	if err != nil {
+		return nil, w.createErrorResponceWithSpan(span, ErrInternal, err.Error())
+	}
 	return res, nil
 }
 
