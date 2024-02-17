@@ -380,7 +380,6 @@ func (w *cinemaRepositoryWrapper) GetHalls(ctx context.Context,
 	if len(cachedHalls) != 0 && err == nil {
 		w.metrics.IncCacheHits("GetHalls", len(ids)-len(notFoundedIds))
 		w.metrics.IncCacheMiss("GetHalls", len(notFoundedIds))
-		ids = notFoundedIds
 	}
 
 	w.logger.Info("Searching halls in repository")
