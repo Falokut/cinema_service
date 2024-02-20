@@ -9,6 +9,7 @@ import (
 	"time"
 
 	cinema_service "github.com/Falokut/cinema_service/pkg/cinema_service/v1/protos"
+	"github.com/mennanov/fmutils"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
 	"github.com/sirupsen/logrus"
@@ -34,7 +35,7 @@ type CinemaRepository interface {
 	GetHallConfiguraion(ctx context.Context, id int32) (*cinema_service.HallConfiguration, error)
 	GetHalls(ctx context.Context, ids []int32) (*cinema_service.Halls, error)
 
-	GetScreening(ctx context.Context, id int32) (*cinema_service.GetScreeningResponse, error)
+	GetScreening(ctx context.Context, id int64) (*cinema_service.GetScreeningResponse, error)
 }
 
 type CinemaService struct {
@@ -104,7 +105,7 @@ func (s *CinemaService) GetMoviesScreeningsInCities(ctx context.Context,
 		res, err = s.cinemaRepo.GetAllMoviesScreenings(ctx, start, end)
 	} else {
 		if err := checkIds(in.GetCitiesIds()); err != nil {
-			return nil, s.errorHandler.createErrorResponceWithSpan(span, ErrInvalidArgument, "invalid ")
+			return nil, s.errorHandler.createErrorResponceWithSpan(span, ErrInvalidArgument, "invalid cities ids")
 		}
 		ids := convertStringsSlice(strings.Split(in.GetCitiesIds(), ","))
 		res, err = s.cinemaRepo.GetMoviesScreeningsInCities(ctx, ids, start, end)
@@ -176,6 +177,10 @@ func (s *CinemaService) GetScreening(ctx context.Context,
 	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaService.GetScreening")
 	defer span.Finish()
 
+	if in.Mask != nil && !in.Mask.IsValid(&cinema_service.GetScreeningResponse{}) {
+		return nil, s.errorHandler.createErrorResponceWithSpan(span, ErrInvalidArgument, "invalid mask value")
+	}
+
 	res, err := s.cinemaRepo.GetScreening(ctx, in.ScreeningId)
 	if err != nil {
 		ext.LogError(span, err)
@@ -183,6 +188,10 @@ func (s *CinemaService) GetScreening(ctx context.Context,
 		return nil, err
 	}
 
+	
+	if in.Mask!=nil {
+		fmutils.Filter(res, in.Mask.Paths)
+	}
 	span.SetTag("grpc.status", codes.OK)
 	return res, nil
 }

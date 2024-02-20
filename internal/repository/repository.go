@@ -6,24 +6,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jmoiron/sqlx"
+	"github.com/Falokut/cinema_service/internal/models"
 	"github.com/redis/go-redis/v9"
 )
 
 var ErrNotFound = errors.New("entity not found")
 var ErrInvalidArgument = errors.New("invalid input data")
-
-func NewPostgreDB(cfg DBConfig) (*sqlx.DB, error) {
-	conStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		cfg.Host, cfg.Port, cfg.Username, cfg.Password, cfg.DBName, cfg.SSLMode)
-	db, err := sqlx.Connect("pgx", conStr)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return db, nil
-}
 
 func NewRedisCache(opt *redis.Options) (*redis.Client, error) {
 	rdb := redis.NewClient(opt)
@@ -48,121 +36,58 @@ type DBConfig struct {
 	SSLMode  string `yaml:"ssl_mode" env:"DB_SSL_MODE"`
 }
 
-type Hall struct {
-	Type string `db:"hall_type" json:"hall_type"`
-	Name string `db:"name" json:"name"`
-	Size uint32 `db:"size" json:"size"`
-	Id   int32  `db:"id" json:"id"`
-}
-
-type Cinema struct {
-	Name        string   `json:"name" db:"name"`
-	Address     string   `json:"address" db:"address"`
-	Coordinates GeoPoint `json:"coordinates" db:"coordinates"`
-	ID          int32    `json:"id" db:"id"`
-}
-
-type City struct {
-	Name string `json:"name" db:"name"`
-	ID   int32  `json:"id" db:"id"`
-}
-
-type MoviesScreenings struct {
-	ScreeningsTypes []string `json:"screenings_types" db:"screenings_types"`
-	HallsTypes      []string `json:"halls_types" db:"halls_types"`
-	MovieID         int32    `json:"movie_id" db:"movie_id"`
-}
-
-type Screening struct {
-	ScreeningType string    `json:"screening_type" db:"screening_type"`
-	TicketPrice   string    `json:"ticket_price" db:"ticket_price"`
-	StartTime     time.Time `json:"start_time" db:"start_time"`
-	HallId        int32     `json:"hall_id" db:"hall_id"`
-	MovieId       int32     `json:"movie_id" db:"movie_id"`
-	CinemaId      int32     `json:"cinema_id" db:"cinema_id"`
-}
-
-type Place struct {
-	Row      int32   `json:"row" db:"row"`
-	Seat     int32   `json:"seat" db:"seat"`
-	GridPosX float32 `json:"grid_pos_x" db:"grid_pos_x"`
-	GridPosY float32 `json:"grid_pos_y" db:"grid_pos_y"`
-}
-
-type CityScreening struct {
-	ScreeningType string    `json:"screening_type" db:"screening_type"`
-	TicketPrice   string    `json:"ticket_price" db:"ticket_price"`
-	StartTime     time.Time `json:"start_time" db:"start_time"`
-	ScreeningId   int64     `json:"id" db:"id"`
-	HallId        int32     `json:"hall_id" db:"hall_id"`
-	CinemaId      int32     `json:"cinema_id" db:"cinema_id"`
-}
-
-type screening struct {
-	ScreeningType string    `json:"screening_type" db:"screening_type"`
-	TicketPrice   string    `json:"ticket_price" db:"ticket_price"`
-	StartTime     time.Time `json:"start_time" db:"start_time"`
-	ScreeningID   int64     `json:"id" db:"id"`
-	HallID        int32     `json:"hall_id" db:"hall_id"`
-	MovieID       int32     `json:"movie_id" db:"movie_id"`
-}
-
-type Screenings struct {
-	Screenings []screening
-}
-
 type CinemaRepository interface {
-	GetScreening(ctx context.Context, id int32) (Screening, error)
+	GetScreening(ctx context.Context, id int64) (models.Screening, error)
 	// Returns cinemas in the city.
-	GetCinemasInCity(ctx context.Context, id int32) ([]Cinema, error)
+	GetCinemasInCity(ctx context.Context, id int32) ([]models.Cinema, error)
 
 	// Returns all cities where there are cinemas.
-	GetCinemasCities(ctx context.Context) ([]City, error)
+	GetCinemasCities(ctx context.Context) ([]models.City, error)
 
 	// Returns all movies that are in the cinema screenings in a particular cinema.
-	GetMoviesScreenings(ctx context.Context, cinemaID int32, startPeriod, endPeriod time.Time) ([]MoviesScreenings, error)
+	GetMoviesScreenings(ctx context.Context, cinemaID int32, startPeriod, endPeriod time.Time) ([]models.MoviesScreenings, error)
 
 	// Returns all screenings for a movie in a specific city.
-	GetCityScreenings(ctx context.Context, cityId, movieId int32, startPeriod, endPeriod time.Time) ([]CityScreening, error)
+	GetCityScreenings(ctx context.Context, cityId, movieId int32, startPeriod, endPeriod time.Time) ([]models.CityScreening, error)
 
 	// Returns all movies that are in the cinema screenings.
-	GetAllMoviesScreenings(ctx context.Context, startPeriod, endPeriod time.Time) ([]MoviesScreenings, error)
+	GetAllMoviesScreenings(ctx context.Context, startPeriod, endPeriod time.Time) ([]models.MoviesScreenings, error)
 
 	// Returns all movies that are in the cinema screenings in particular cities.
-	GetMoviesScreeningsInCities(ctx context.Context, citiesIds []int32, startPeriod, endPeriod time.Time) ([]MoviesScreenings, error)
+	GetMoviesScreeningsInCities(ctx context.Context, citiesIds []int32, startPeriod, endPeriod time.Time) ([]models.MoviesScreenings, error)
 
 	//Returns all screenings for a movie in a specific cinema.
-	GetScreenings(ctx context.Context, cinemaID, movieID int32, startPeriod, endPeriod time.Time) (Screenings, error)
+	GetScreenings(ctx context.Context, cinemaID, movieID int32, startPeriod, endPeriod time.Time) ([]models.Screening, error)
 
 	// Returns the configuration of the hall.
-	GetHallConfiguraion(ctx context.Context, id int32) ([]Place, error)
+	GetHallConfiguraion(ctx context.Context, id int32) ([]models.Place, error)
 
 	// Returns info for the halls with specified ids (without configuration).
-	GetHalls(ctx context.Context, ids []int32) ([]Hall, error)
+	GetHalls(ctx context.Context, ids []int32) ([]models.Hall, error)
 
 	// Returns cinema with specified id.
-	GetCinema(ctx context.Context, id int32) (Cinema, error)
+	GetCinema(ctx context.Context, id int32) (models.Cinema, error)
 }
 
 type CinemaCache interface {
 	// Returns cinemas in the city.
-	GetCinemasInCity(ctx context.Context, id int32) ([]Cinema, error)
+	GetCinemasInCity(ctx context.Context, id int32) ([]models.Cinema, error)
 
 	// Returns all cities where there are cinemas.
-	GetCinemasCities(ctx context.Context) ([]City, error)
+	GetCinemasCities(ctx context.Context) ([]models.City, error)
 
 	// Returns the configuration of the hall.
-	GetHallConfiguraion(ctx context.Context, id int32) ([]Place, error)
+	GetHallConfiguraion(ctx context.Context, id int32) ([]models.Place, error)
 
 	// Returns info for the halls with specified ids and not founded ids (without configuration).
-	GetHalls(ctx context.Context, ids []int32) ([]Hall, []int32, error)
+	GetHalls(ctx context.Context, ids []int32) ([]models.Hall, []int32, error)
 
 	// Returns cinema with specified id.
-	GetCinema(ctx context.Context, id int32) (Cinema, error)
+	GetCinema(ctx context.Context, id int32) (models.Cinema, error)
 
-	CacheCinemasInCity(ctx context.Context, id int32, cinemas []Cinema, ttl time.Duration) error
-	CacheCinemasCities(ctx context.Context, cities []City, ttl time.Duration) error
-	CacheHallConfiguraion(ctx context.Context, id int32, places []Place, ttl time.Duration) error
-	CacheHalls(ctx context.Context, halls []Hall, ttl time.Duration) error
-	CacheCinema(ctx context.Context, cinema Cinema, ttl time.Duration) error
+	CacheCinemasInCity(ctx context.Context, id int32, cinemas []models.Cinema, ttl time.Duration) error
+	CacheCinemasCities(ctx context.Context, cities []models.City, ttl time.Duration) error
+	CacheHallConfiguraion(ctx context.Context, id int32, places []models.Place, ttl time.Duration) error
+	CacheHalls(ctx context.Context, halls []models.Hall, ttl time.Duration) error
+	CacheCinema(ctx context.Context, cinema models.Cinema, ttl time.Duration) error
 }

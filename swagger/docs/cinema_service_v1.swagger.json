@@ -36,15 +36,15 @@
             }
           },
           "404": {
-            "description": "Returned when the resource does not exist.",
+            "description": "Returned when cinema with specified id not found.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           },
           "500": {
             "description": "Something went wrong.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           },
           "default": {
@@ -84,15 +84,13 @@
             "schema": {}
           },
           "404": {
-            "description": "Returned when the resource does not exist.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
+            "description": "Returned when no screenings with specified movie_id were found in specified cinema during the specified period.",
+            "schema": {}
           },
           "500": {
             "description": "Something went wrong.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           },
           "default": {
@@ -153,15 +151,13 @@
             "schema": {}
           },
           "404": {
-            "description": "Returned when the resource does not exist.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
+            "description": "Returned when no movies screenings were found in specified cinema during the specified period.",
+            "schema": {}
           },
           "500": {
             "description": "Something went wrong.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           },
           "default": {
@@ -213,13 +209,13 @@
           "404": {
             "description": "Returned when the resource does not exist.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           },
           "500": {
             "description": "Something went wrong.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           },
           "default": {
@@ -246,15 +242,15 @@
             }
           },
           "404": {
-            "description": "Returned when the resource does not exist.",
+            "description": "Returned when no cinema in specified city found.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           },
           "500": {
             "description": "Something went wrong.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           },
           "default": {
@@ -294,15 +290,13 @@
             "schema": {}
           },
           "404": {
-            "description": "Returned when the resource does not exist.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
+            "description": "Returned when no screenings were found in specified city during the specified period.",
+            "schema": {}
           },
           "500": {
             "description": "Something went wrong.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           },
           "default": {
@@ -359,15 +353,13 @@
             }
           },
           "404": {
-            "description": "Returned when the resource does not exist.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
+            "description": "Returned when hall with specified id not found.",
+            "schema": {}
           },
           "500": {
             "description": "Something went wrong.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           },
           "default": {
@@ -405,13 +397,13 @@
           "404": {
             "description": "Returned when the resource does not exist.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           },
           "500": {
             "description": "Something went wrong.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           },
           "default": {
@@ -425,6 +417,63 @@
           {
             "name": "halls_ids",
             "description": "for multiple values use ',' separator",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "cinemaServiceV1"
+        ]
+      }
+    },
+    "/v1/screening/{screening_id}": {
+      "get": {
+        "summary": "Returns info about screening.",
+        "operationId": "cinemaServiceV1_GetScreening",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/cinema_serviceGetScreeningResponse"
+            }
+          },
+          "400": {
+            "description": "Returned when the mask paths contains fields that are not in the GetScreeningResponse.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          },
+          "404": {
+            "description": "Returned when screening with specified id not found.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          },
+          "500": {
+            "description": "Something went wrong.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "screening_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "mask",
+            "description": "Fields to return, valid array values is GetScreeningResponse fields names, leave it empty if you want get all fields",
             "in": "query",
             "required": false,
             "type": "string"
@@ -451,15 +500,13 @@
             "schema": {}
           },
           "404": {
-            "description": "Returned when the resource does not exist.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
+            "description": "Returned when no movies screenings were found in specified city during the specified period.",
+            "schema": {}
           },
           "500": {
             "description": "Something went wrong.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           },
           "default": {
@@ -490,50 +537,6 @@
             "in": "query",
             "required": false,
             "type": "string"
-          }
-        ],
-        "tags": [
-          "cinemaServiceV1"
-        ]
-      }
-    },
-    "/v1/screenings/{screening_id}": {
-      "get": {
-        "summary": "Returns info about screening.",
-        "operationId": "cinemaServiceV1_GetScreening",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/cinema_serviceGetScreeningResponse"
-            }
-          },
-          "404": {
-            "description": "Returned when the resource does not exist.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          },
-          "500": {
-            "description": "Something went wrong.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "screening_id",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "format": "int32"
           }
         ],
         "tags": [

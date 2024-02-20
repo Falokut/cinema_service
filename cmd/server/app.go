@@ -8,7 +8,8 @@ import (
 	"syscall"
 
 	"github.com/Falokut/cinema_service/internal/config"
-	"github.com/Falokut/cinema_service/internal/repository"
+	"github.com/Falokut/cinema_service/internal/repository/postgresrepository"
+	"github.com/Falokut/cinema_service/internal/repository/rediscache"
 	"github.com/Falokut/cinema_service/internal/service"
 	cinema_service "github.com/Falokut/cinema_service/pkg/cinema_service/v1/protos"
 	jaegerTracer "github.com/Falokut/cinema_service/pkg/jaeger"
@@ -59,14 +60,14 @@ func main() {
 		}
 	}()
 
-	cinemaDB, err := repository.NewPostgreDB(cfg.DBConfig)
+	cinemaDB, err := postgresrepository.NewPostgreDB(cfg.DBConfig)
 	if err != nil {
 		logger.Errorf("Shutting down, connection to the database not established %v", err)
 		return
 	}
 	defer cinemaDB.Close()
 
-	citiesCinemas, err := repository.NewRedisCache(&redis.Options{
+	citiesCinemas, err := rediscache.NewRedisCache(&redis.Options{
 		Network:  cfg.CitiesCinemasCache.Network,
 		Addr:     cfg.CitiesCinemasCache.Addr,
 		DB:       cfg.CitiesCinemasCache.DB,
@@ -78,7 +79,7 @@ func main() {
 	}
 	defer citiesCinemas.Close()
 
-	cinemasRdb, err := repository.NewRedisCache(&redis.Options{
+	cinemasRdb, err := rediscache.NewRedisCache(&redis.Options{
 		Network:  cfg.CinemasCache.Network,
 		Addr:     cfg.CinemasCache.Addr,
 		DB:       cfg.CinemasCache.DB,
@@ -90,7 +91,7 @@ func main() {
 	}
 	defer cinemasRdb.Close()
 
-	citiesRdb, err := repository.NewRedisCache(&redis.Options{
+	citiesRdb, err := rediscache.NewRedisCache(&redis.Options{
 		Network:  cfg.CitiesCache.Network,
 		Addr:     cfg.CitiesCache.Addr,
 		DB:       cfg.CitiesCache.DB,
@@ -102,7 +103,7 @@ func main() {
 	}
 	defer citiesRdb.Close()
 
-	hallsRdb, err := repository.NewRedisCache(&redis.Options{
+	hallsRdb, err := rediscache.NewRedisCache(&redis.Options{
 		Network:  cfg.HallsCache.Network,
 		Addr:     cfg.HallsCache.Addr,
 		DB:       cfg.HallsCache.DB,
@@ -114,7 +115,7 @@ func main() {
 	}
 	defer hallsRdb.Close()
 
-	hallsConfigurationsRdb, err := repository.NewRedisCache(&redis.Options{
+	hallsConfigurationsRdb, err := rediscache.NewRedisCache(&redis.Options{
 		Network:  cfg.HallsConfigurationCache.Network,
 		Addr:     cfg.HallsConfigurationCache.Addr,
 		DB:       cfg.HallsConfigurationCache.DB,
@@ -126,7 +127,7 @@ func main() {
 	}
 	defer hallsConfigurationsRdb.Close()
 
-	cinemaCache := repository.NewCinemaCache(logger.Logger, citiesCinemas, cinemasRdb, citiesRdb,
+	cinemaCache := rediscache.NewCinemaCache(logger.Logger, citiesCinemas, cinemasRdb, citiesRdb,
 		hallsConfigurationsRdb, hallsRdb)
 	go func() {
 		logger.Info("Healthcheck initializing")
@@ -139,7 +140,7 @@ func main() {
 		}
 	}()
 
-	cinemaRepo := repository.NewCinemaRepository(logger.Logger, cinemaDB)
+	cinemaRepo := postgresrepository.NewCinemaRepository(logger.Logger, cinemaDB)
 	repository := service.NewCinemaRepositoryWrapper(logger.Logger, cinemaRepo, cinemaCache,
 		service.CacheConfig{
 			HallConfigurationTTL: cfg.HallsCache.TTL,

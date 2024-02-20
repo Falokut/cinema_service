@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package cinema_service;
 option go_package = "cinema_service/v1/protos";
+import "google/protobuf/field_mask.proto";
 
 message Timestamp {
   // Time in format RFC3339, time must be in UTC
@@ -126,17 +127,19 @@ message Place {
 }
 
 message GetScreeningRequest {
-  int32 screeningId = 1[json_name="screening_id"];
+  int64 screeningId = 1[json_name="screening_id"];
+    // Fields to return, valid array values is GetScreeningResponse fields names, leave it empty if you want get all fields
+    google.protobuf.FieldMask mask = 2;
 }
 
 message GetScreeningResponse {
-  int32 cinemaId = 1[json_name="cinema_id"];
-  int32 movieId = 2 [ json_name = "movie_id" ];
-  string screeningType = 3 [ json_name = "screening_type" ];
-  Timestamp startTime = 4 [ json_name = "start_time" ];
-  int32 hallID = 5 [ json_name = "hall_id" ];
-  Price ticketPrice = 6 [ json_name = "ticket_price" ];
-  HallConfiguration hallConfiguration = 7[json_name="hall_configuration"];
+  int32 cinema_id = 1[json_name="cinema_id"];
+  int32 movie_id = 2 [ json_name = "movie_id" ];
+  string screening_type = 3 [ json_name = "screening_type" ];
+  Timestamp start_time = 4 [ json_name = "start_time" ];
+  int32 hall_id = 5 [ json_name = "hall_id" ];
+  Price ticket_price = 6 [ json_name = "ticket_price" ];
+  HallConfiguration hall_configuration = 7[json_name="hall_configuration"];
 }
 
 message HallConfiguration { repeated Place place = 1; }

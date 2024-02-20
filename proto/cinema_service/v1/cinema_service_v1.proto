@@ -35,7 +35,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
             description: "Returned when the resource does not exist.";
             schema: {
                 json_schema: {
-                    ref: "#/definitions/rpcStatus";
+                    ref: "#/definitions/googlerpcStatus";
                 }
             }
         }
@@ -46,7 +46,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
             description: "Something went wrong.";
             schema: {
                 json_schema: {
-                    ref: "#/definitions/rpcStatus";
+                    ref: "#/definitions/googlerpcStatus";
                 }
             }
         }
@@ -67,6 +67,19 @@ service cinemaServiceV1 {
         option (google.api.http) = {
             get: "/v1/cities/{cityId}/cinemas"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            responses: {
+                key: "404"
+                value: {
+                    description: "Returned when no cinema in specified city found.";
+                    schema: {
+                        json_schema: {
+                            ref: "#/definitions/googlerpcStatus";
+                        }
+                    }
+                }
+            };
+        };
     }
 
     // Returns cinema with specified id.
@@ -74,12 +87,49 @@ service cinemaServiceV1 {
         option (google.api.http) = {
             get: "/v1/cinema/{cinemaId}"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            responses: {
+                key: "404"
+                value: {
+                    description: "Returned when cinema with specified id not found.";
+                    schema: {
+                        json_schema: {
+                            ref: "#/definitions/googlerpcStatus";
+                        }
+                    }
+                }
+            };
+        };
     }
 
     // Returns info about screening.
     rpc GetScreening(GetScreeningRequest) returns(GetScreeningResponse) {
         option (google.api.http) = {
-            get: "/v1/screenings/{screeningId}"
+            get: "/v1/screening/{screeningId}"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            responses: {
+                key: "404"
+                value: {
+                    description: "Returned when screening with specified id not found.";
+                    schema: {
+                        json_schema: {
+                            ref: "#/definitions/googlerpcStatus";
+                        }
+                    }
+                }
+            };
+            responses: {
+                key: "400"
+                value: {
+                    description: "Returned when the mask paths contains fields that are not in the GetScreeningResponse.";
+                    schema: {
+                        json_schema: {
+                            ref: "#/definitions/googlerpcStatus";
+                        }
+                    }
+                }
+            };
         };
     }
 
@@ -93,6 +143,12 @@ service cinemaServiceV1 {
                 key: "400"
                     value: {
                         description: "Returned when specified start_period or end_period is not valid."
+                    }
+            };
+            responses: {
+                key: "404"
+                    value: {
+                        description: "Returned when no movies screenings were found in specified cinema during the specified period."
                     }
             };
         };
@@ -110,6 +166,12 @@ service cinemaServiceV1 {
                         description: "Returned when specified start_period or end_period or cities_ids is not valid."
                     }
             };
+            responses: {
+                key: "404"
+                    value: {
+                        description: "Returned when no movies screenings were found in specified city during the specified period."
+                    }
+            };
         };
     }
 
@@ -123,6 +185,12 @@ service cinemaServiceV1 {
                 key: "400"
                     value: {
                         description: "Returned when specified start_period or end_period is not valid."
+                    }
+            };
+            responses: {
+                key: "404"
+                    value: {
+                        description: "Returned when no screenings were found in specified city during the specified period."
                     }
             };
         };
@@ -147,6 +215,12 @@ service cinemaServiceV1 {
                         description: "Returned when specified start_period or end_period is not valid."
                     }
             };
+            responses: {
+                key: "404"
+                    value: {
+                        description: "Returned when no screenings with specified movie_id were found in specified cinema during the specified period."
+                    }
+            };
         };
     }
 
@@ -154,6 +228,15 @@ service cinemaServiceV1 {
     rpc GetHallConfiguration(GetHallConfigurationRequest) returns(HallConfiguration) {
         option (google.api.http) = {
             get: "/v1/hall/{hallId}/configuration"
+        };
+
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            responses: {
+                key: "404"
+                    value: {
+                        description: "Returned when hall with specified id not found."
+                    }
+            };
         };
     }
 

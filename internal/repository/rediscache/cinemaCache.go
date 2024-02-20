@@ -1,4 +1,4 @@
-package repository
+package rediscache
 
 import (
 	"context"
@@ -6,13 +6,14 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/Falokut/cinema_service/internal/models"
 	"github.com/opentracing/opentracing-go"
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/exp/maps"
 )
 
-type cinemaCache struct {
+type CinemaCache struct {
 	logger                 *logrus.Logger
 	citiesCinemasRdb       *redis.Client
 	citiesRdb              *redis.Client
@@ -21,8 +22,8 @@ type cinemaCache struct {
 	cinemasRdb             *redis.Client
 }
 
-func NewCinemaCache(logger *logrus.Logger, cinemasCitiesRdb, cinemasRdb, citiesRdb, hallsConfigurationsRdb, hallsRdb *redis.Client) *cinemaCache {
-	return &cinemaCache{
+func NewCinemaCache(logger *logrus.Logger, cinemasCitiesRdb, cinemasRdb, citiesRdb, hallsConfigurationsRdb, hallsRdb *redis.Client) *CinemaCache {
+	return &CinemaCache{
 		logger:                 logger,
 		citiesCinemasRdb:       cinemasCitiesRdb,
 		cinemasRdb:             cinemasRdb,
@@ -32,7 +33,7 @@ func NewCinemaCache(logger *logrus.Logger, cinemasCitiesRdb, cinemasRdb, citiesR
 	}
 }
 
-func (c *cinemaCache) PingContext(ctx context.Context) error {
+func (c *CinemaCache) PingContext(ctx context.Context) error {
 	if err := c.cinemasRdb.Ping(ctx).Err(); err != nil {
 		return fmt.Errorf("error while pinging cinemas cache: %w", err)
 	}
@@ -51,28 +52,28 @@ func (c *cinemaCache) PingContext(ctx context.Context) error {
 	return nil
 }
 
-func (c *cinemaCache) GetCinema(ctx context.Context, id int32) (Cinema, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaCache.GetCinema")
+func (c *CinemaCache) GetCinema(ctx context.Context, id int32) (models.Cinema, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaCacheGetCinema")
 	defer span.Finish()
 	var err error
 	defer span.SetTag("error", err != nil)
 
 	data, err := c.cinemasRdb.Get(ctx, fmt.Sprint(id)).Bytes()
 	if err != nil {
-		return Cinema{}, err
+		return models.Cinema{}, err
 	}
-	var cinema Cinema
+	var cinema models.Cinema
 	err = json.Unmarshal(data, &cinema)
 	if err != nil {
 		c.logger.Errorf("error while unmarchalling cinema %s", err.Error())
-		return Cinema{}, err
+		return models.Cinema{}, err
 	}
 
 	return cinema, nil
 }
 
-func (c *cinemaCache) CacheCinema(ctx context.Context, cinema Cinema, ttl time.Duration) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaCache.CacheCinema")
+func (c *CinemaCache) CacheCinema(ctx context.Context, cinema models.Cinema, ttl time.Duration) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaCache.CacheCinema")
 	defer span.Finish()
 	var err error
 	defer span.SetTag("error", err != nil)
@@ -85,8 +86,8 @@ func (c *cinemaCache) CacheCinema(ctx context.Context, cinema Cinema, ttl time.D
 	return err
 }
 
-func (c *cinemaCache) GetCinemasInCity(ctx context.Context, id int32) ([]Cinema, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaCache.GetCinemasInCity")
+func (c *CinemaCache) GetCinemasInCity(ctx context.Context, id int32) ([]models.Cinema, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaCache.GetCinemasInCity")
 	defer span.Finish()
 	var err error
 	defer span.SetTag("error", err != nil)
@@ -94,21 +95,21 @@ func (c *cinemaCache) GetCinemasInCity(ctx context.Context, id int32) ([]Cinema,
 	data, err := c.citiesCinemasRdb.Get(ctx, fmt.Sprint(id)).Bytes()
 	if err != nil {
 		c.logger.Errorf("error while getting cinemas in city %s", err.Error())
-		return []Cinema{}, err
+		return []models.Cinema{}, err
 	}
 
-	var cinemas []Cinema
+	var cinemas []models.Cinema
 	err = json.Unmarshal(data, &cinemas)
 	if err != nil {
 		c.logger.Errorf("error while unmarchalling cinemas in city %s", err.Error())
-		return []Cinema{}, err
+		return []models.Cinema{}, err
 	}
 
 	return cinemas, nil
 }
 
-func (c *cinemaCache) GetCinemasCities(ctx context.Context) ([]City, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaCache.CacheCinemasInCity")
+func (c *CinemaCache) GetCinemasCities(ctx context.Context) ([]models.City, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaCache.CacheCinemasInCity")
 	defer span.Finish()
 	var err error
 	defer span.SetTag("error", err != nil)
@@ -117,22 +118,22 @@ func (c *cinemaCache) GetCinemasCities(ctx context.Context) ([]City, error) {
 	c.citiesRdb.Keys(ctx, "*").ScanSlice(&keys)
 	if err != nil {
 		c.logger.Errorf("error while getting cinemas cities keys %s", err.Error())
-		return []City{}, err
+		return []models.City{}, err
 	}
 
 	redisData, err := c.citiesRdb.MGet(ctx, keys...).Result()
 	if err != nil {
 		c.logger.Errorf("error while getting cinemas cities %s", err.Error())
-		return []City{}, err
+		return []models.City{}, err
 	}
 
-	var cities = make([]City, 0, len(redisData))
+	var cities = make([]models.City, 0, len(redisData))
 	for _, data := range redisData {
-		var city City
+		var city models.City
 		err = json.Unmarshal([]byte(data.(string)), &city)
 		if err != nil {
 			c.logger.Errorf("error while unmarchalling cinemas in city %s", err.Error())
-			return []City{}, err
+			return []models.City{}, err
 		}
 
 		cities = append(cities, city)
@@ -141,8 +142,8 @@ func (c *cinemaCache) GetCinemasCities(ctx context.Context) ([]City, error) {
 	return cities, nil
 }
 
-func (c *cinemaCache) GetHallConfiguraion(ctx context.Context, id int32) ([]Place, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaCache.GetCinemasInCity")
+func (c *CinemaCache) GetHallConfiguraion(ctx context.Context, id int32) ([]models.Place, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaCache.GetCinemasInCity")
 	defer span.Finish()
 	var err error
 	defer span.SetTag("error", err != nil)
@@ -150,21 +151,21 @@ func (c *cinemaCache) GetHallConfiguraion(ctx context.Context, id int32) ([]Plac
 	data, err := c.hallsConfigurationsRdb.Get(ctx, fmt.Sprint(id)).Bytes()
 	if err != nil {
 		c.logger.Errorf("error while getting places %s", err.Error())
-		return []Place{}, err
+		return []models.Place{}, err
 	}
 
-	var places []Place
+	var places []models.Place
 	err = json.Unmarshal(data, &places)
 	if err != nil {
 		c.logger.Errorf("error while unmarchalling places %s", err.Error())
-		return []Place{}, err
+		return []models.Place{}, err
 	}
 
 	return places, nil
 }
 
-func (c *cinemaCache) CacheCinemasInCity(ctx context.Context, id int32, cinemas []Cinema, ttl time.Duration) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaCache.CacheCinemasInCity")
+func (c *CinemaCache) CacheCinemasInCity(ctx context.Context, id int32, cinemas []models.Cinema, ttl time.Duration) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaCache.CacheCinemasInCity")
 	defer span.Finish()
 	var err error
 	defer span.SetTag("error", err != nil)
@@ -178,8 +179,8 @@ func (c *cinemaCache) CacheCinemasInCity(ctx context.Context, id int32, cinemas 
 	return err
 }
 
-func (c *cinemaCache) CacheCinemasCities(ctx context.Context, cities []City, ttl time.Duration) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaCache.CacheCinemasCities")
+func (c *CinemaCache) CacheCinemasCities(ctx context.Context, cities []models.City, ttl time.Duration) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaCache.CacheCinemasCities")
 	defer span.Finish()
 	var err error
 	defer span.SetTag("error", err != nil)
@@ -196,8 +197,8 @@ func (c *cinemaCache) CacheCinemasCities(ctx context.Context, cities []City, ttl
 	return err
 }
 
-func (c *cinemaCache) CacheHallConfiguraion(ctx context.Context, id int32, places []Place, ttl time.Duration) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaCache.CacheHallConfiguraion")
+func (c *CinemaCache) CacheHallConfiguraion(ctx context.Context, id int32, places []models.Place, ttl time.Duration) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaCache.CacheHallConfiguraion")
 	defer span.Finish()
 	var err error
 	defer span.SetTag("error", err != nil)
@@ -211,8 +212,8 @@ func (c *cinemaCache) CacheHallConfiguraion(ctx context.Context, id int32, place
 	return err
 }
 
-func (c *cinemaCache) CacheHalls(ctx context.Context, halls []Hall, ttl time.Duration) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaCache.CacheHalls")
+func (c *CinemaCache) CacheHalls(ctx context.Context, halls []models.Hall, ttl time.Duration) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaCache.CacheHalls")
 	defer span.Finish()
 	var err error
 	defer span.SetTag("error", err != nil)
@@ -229,8 +230,8 @@ func (c *cinemaCache) CacheHalls(ctx context.Context, halls []Hall, ttl time.Dur
 	return err
 }
 
-func (c *cinemaCache) GetHalls(ctx context.Context, ids []int32) ([]Hall, []int32, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaCache.GetHalls")
+func (c *CinemaCache) GetHalls(ctx context.Context, ids []int32) ([]models.Hall, []int32, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaCache.GetHalls")
 	defer span.Finish()
 	var err error
 	defer span.SetTag("error", err != nil)
@@ -244,19 +245,19 @@ func (c *cinemaCache) GetHalls(ctx context.Context, ids []int32) ([]Hall, []int3
 
 	halls, err := c.hallsRdb.MGet(ctx, keys...).Result()
 	if err != nil {
-		return []Hall{}, []int32{}, err
+		return []models.Hall{}, []int32{}, err
 	}
 
-	var cachedHalls = make([]Hall, 0, len(halls))
+	var cachedHalls = make([]models.Hall, 0, len(halls))
 	for _, cached := range halls {
 		if cached == nil {
 			continue
 		}
 
-		hall := Hall{}
+		hall := models.Hall{}
 		err = json.Unmarshal([]byte(cached.(string)), &hall)
 		if err != nil {
-			return []Hall{}, []int32{}, err
+			return []models.Hall{}, []int32{}, err
 		}
 		delete(hallsIds, hall.Id)
 		cachedHalls = append(cachedHalls, hall)

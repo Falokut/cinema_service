@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Falokut/cinema_service/internal/models"
 	"github.com/Falokut/cinema_service/internal/repository"
 	cinema_service "github.com/Falokut/cinema_service/pkg/cinema_service/v1/protos"
 	"github.com/opentracing/opentracing-go"
@@ -38,13 +39,13 @@ type cinemaRepositoryWrapper struct {
 	metrics  Metrics
 }
 
-func NewCinemaRepositoryWrapper(logger *logrus.Logger, cinemaRepository repository.CinemaRepository,
+func NewCinemaRepositoryWrapper(logger *logrus.Logger, repo repository.CinemaRepository,
 	cache repository.CinemaCache, cacheCfg CacheConfig, metrics Metrics) *cinemaRepositoryWrapper {
 	errorHandler := newErrorHandler(logger)
 	return &cinemaRepositoryWrapper{
 		logger:       logger,
 		errorHandler: errorHandler,
-		repo:         cinemaRepository,
+		repo:         repo,
 		cache:        cache,
 		cacheCfg:     cacheCfg,
 		metrics:      metrics,
@@ -66,18 +67,21 @@ func (w *cinemaRepositoryWrapper) GetCinemasInCity(ctx context.Context, id int32
 	if err != nil {
 		return nil, err
 	}
+	if len(cinemas) == 0 {
+		return nil, w.createErrorResponceWithSpan(span, ErrNotFound, "cinemas in city not found")
+	}
 
 	go func() {
 		err := w.cache.CacheCinemasInCity(context.Background(), id, cinemas, w.cacheCfg.CitiesCinemasTTL)
 		if err != nil {
-			w.logger.Errorf("error while caching hall configuration, %s", err)
+			w.logger.Errorf("error while caching cinemas in city, %s", err)
 		}
 	}()
 
 	return convertToCinemas(cinemas), nil
 }
 
-func convertToCinemas(cinemas []repository.Cinema) *cinema_service.Cinemas {
+func convertToCinemas(cinemas []models.Cinema) *cinema_service.Cinemas {
 	res := &cinema_service.Cinemas{}
 	res.Cinemas = make([]*cinema_service.Cinema, len(cinemas))
 	for i, cinema := range cinemas {
@@ -146,12 +150,12 @@ func (w *cinemaRepositoryWrapper) GetMoviesScreeningsInCities(ctx context.Contex
 	return convertMoviesScreeningsToProto(previews), nil
 }
 
-func convertMoviesScreeningsToProto(previews []repository.MoviesScreenings) *cinema_service.PreviewScreenings {
+func convertMoviesScreeningsToProto(previews []models.MoviesScreenings) *cinema_service.PreviewScreenings {
 	res := &cinema_service.PreviewScreenings{}
 	res.Screenings = make([]*cinema_service.PreviewScreening, len(previews))
 	for i, preview := range previews {
 		res.Screenings[i] = &cinema_service.PreviewScreening{
-			MovieID:         preview.MovieID,
+			MovieID:         preview.MovieId,
 			ScreeningsTypes: preview.ScreeningsTypes,
 			HallsTypes:      preview.HallsTypes,
 		}
@@ -170,18 +174,18 @@ func (w *cinemaRepositoryWrapper) GetScreenings(ctx context.Context, cinemaID, m
 	if err != nil {
 		return nil, w.createErrorResponceWithSpan(span, ErrInternal, err.Error())
 	}
-	if len(screenings.Screenings) == 0 {
+	if len(screenings) == 0 {
 		return nil, w.createErrorResponceWithSpan(span, ErrNotFound, "")
 	}
 
 	res := &cinema_service.Screenings{}
-	res.Screenings = make([]*cinema_service.Screening, len(screenings.Screenings))
-	for i, screening := range screenings.Screenings {
+	res.Screenings = make([]*cinema_service.Screening, len(screenings))
+	for i, screening := range screenings {
 		res.Screenings[i] = &cinema_service.Screening{
-			ScreeningID:   screening.ScreeningID,
+			ScreeningID:   screening.ScreeningId,
 			ScreeningType: screening.ScreeningType,
-			MovieID:       screening.MovieID,
-			HallID:        screening.HallID,
+			MovieID:       screening.MovieId,
+			HallID:        screening.HallId,
 			StartTime:     &cinema_service.Timestamp{FormattedTimestamp: screening.StartTime.Format(time.RFC3339)},
 			TicketPrice:   priceFromFloat(screening.TicketPrice),
 		}
@@ -221,7 +225,7 @@ func (w *cinemaRepositoryWrapper) GetCityScreenings(ctx context.Context, cityID,
 	return res, nil
 }
 
-func (w *cinemaRepositoryWrapper) GetScreening(ctx context.Context, id int32) (*cinema_service.GetScreeningResponse, error) {
+func (w *cinemaRepositoryWrapper) GetScreening(ctx context.Context, id int64) (*cinema_service.GetScreeningResponse, error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "cinemaRepositoryWrapper.GetScreening")
 	defer span.Finish()
 
@@ -237,12 +241,12 @@ func (w *cinemaRepositoryWrapper) GetScreening(ctx context.Context, id int32) (*
 		ScreeningType: screening.ScreeningType,
 		CinemaId:      screening.CinemaId,
 		MovieId:       screening.MovieId,
-		HallID:        screening.HallId,
+		HallId:        screening.HallId,
 		StartTime:     &cinema_service.Timestamp{FormattedTimestamp: screening.StartTime.Format(time.RFC3339)},
 		TicketPrice:   priceFromFloat(screening.TicketPrice),
 	}
 
-	res.HallConfiguration, err = w.GetHallConfiguraion(ctx, res.HallID)
+	res.HallConfiguration, err = w.GetHallConfiguraion(ctx, res.HallId)
 	if err != nil {
 		return nil, w.createErrorResponceWithSpan(span, ErrInternal, err.Error())
 	}
@@ -277,7 +281,7 @@ func (w *cinemaRepositoryWrapper) GetCinema(ctx context.Context, id int32) (*cin
 	return convertToCinema(cinema), nil
 }
 
-func convertToCinema(cinema repository.Cinema) *cinema_service.Cinema {
+func convertToCinema(cinema models.Cinema) *cinema_service.Cinema {
 	return &cinema_service.Cinema{
 		CinemaID: cinema.ID,
 		Name:     cinema.Name,
@@ -305,9 +309,6 @@ func (w *cinemaRepositoryWrapper) GetCinemasCities(ctx context.Context) (*cinema
 	if err != nil {
 		return nil, w.createErrorResponceWithSpan(span, ErrInternal, err.Error())
 	}
-	if len(cities) == 0 {
-		return nil, w.createErrorResponceWithSpan(span, ErrNotFound, "")
-	}
 
 	go func() {
 		err := w.cache.CacheCinemasCities(context.Background(), cities, w.cacheCfg.CitiesTTL)
@@ -319,7 +320,7 @@ func (w *cinemaRepositoryWrapper) GetCinemasCities(ctx context.Context) (*cinema
 	return convertToCities(cities), nil
 }
 
-func convertToCities(cities []repository.City) *cinema_service.Cities {
+func convertToCities(cities []models.City) *cinema_service.Cities {
 	res := &cinema_service.Cities{}
 	res.Cities = make([]*cinema_service.City, len(cities))
 	for i, city := range cities {
@@ -398,7 +399,7 @@ func (w *cinemaRepositoryWrapper) GetHalls(ctx context.Context,
 	return convertToHalls(halls), nil
 }
 
-func convertToHalls(halls []repository.Hall) *cinema_service.Halls {
+func convertToHalls(halls []models.Hall) *cinema_service.Halls {
 	res := &cinema_service.Halls{}
 	res.Halls = make([]*cinema_service.Hall, len(halls))
 	for i, hall := range halls {
@@ -413,7 +414,7 @@ func convertToHalls(halls []repository.Hall) *cinema_service.Halls {
 	return res
 }
 
-func convertToHallConfiguration(places []repository.Place) *cinema_service.HallConfiguration {
+func convertToHallConfiguration(places []models.Place) *cinema_service.HallConfiguration {
 	res := &cinema_service.HallConfiguration{}
 	res.Place = make([]*cinema_service.Place, len(places))
 	for i, place := range places {
