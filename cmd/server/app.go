@@ -8,20 +8,67 @@ import (
 	"syscall"
 
 	"github.com/Falokut/cinema_service/internal/config"
+	"github.com/Falokut/cinema_service/internal/handler"
+	"github.com/Falokut/cinema_service/internal/repository"
 	"github.com/Falokut/cinema_service/internal/repository/postgresrepository"
 	"github.com/Falokut/cinema_service/internal/repository/rediscache"
 	"github.com/Falokut/cinema_service/internal/service"
 	cinema_service "github.com/Falokut/cinema_service/pkg/cinema_service/v1/protos"
 	jaegerTracer "github.com/Falokut/cinema_service/pkg/jaeger"
+	"github.com/Falokut/cinema_service/pkg/logging"
 	"github.com/Falokut/cinema_service/pkg/metrics"
 	server "github.com/Falokut/grpc_rest_server"
 	"github.com/Falokut/healthcheck"
-	logging "github.com/Falokut/online_cinema_ticket_office.loggerwrapper"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/opentracing/opentracing-go"
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 )
+
+func initHealthcheck(cfg *config.Config, shutdown chan error, resources []healthcheck.HealthcheckResource) {
+	logger := logging.GetLogger()
+	logger.Info("Healthcheck initializing")
+	healthcheckManager := healthcheck.NewHealthManager(logger.Logger,
+		resources, cfg.HealthcheckPort, nil)
+	go func() {
+		logger.Info("Healthcheck server running")
+		if err := healthcheckManager.RunHealthcheckEndpoint(); err != nil {
+			logger.Errorf("Shutting down, can't run healthcheck endpoint %v", err)
+			shutdown <- err
+		}
+	}()
+}
+
+func initMetrics(cfg *config.Config, shutdown chan error) (metrics.Metrics, error) {
+	logger := logging.GetLogger()
+
+	tracer, closer, err := jaegerTracer.InitJaeger(cfg.JaegerConfig)
+	if err != nil {
+		logger.Errorf("Shutting down, error while creating tracer %v", err)
+		return nil, err
+	}
+
+	logger.Info("Jaeger connected")
+	defer closer.Close()
+	opentracing.SetGlobalTracer(tracer)
+
+	logger.Info("Metrics initializing")
+	metric, err := metrics.CreateMetrics(cfg.PrometheusConfig.Name)
+	if err != nil {
+		logger.Errorf("Shutting down, error while creating metrics %v", err)
+		return nil, err
+	}
+
+	go func() {
+		logger.Info("Metrics server running")
+		if err := metrics.RunMetricServer(cfg.PrometheusConfig.ServerConfig); err != nil {
+			logger.Errorf("Shutting down, error while running metrics server %v", err)
+			shutdown <- err
+		}
+	}()
+
+	return metric, nil
+}
 
 func main() {
 	logging.NewEntry(logging.ConsoleOutput)
@@ -34,33 +81,13 @@ func main() {
 	}
 	logger.Logger.SetLevel(logLevel)
 
-	tracer, closer, err := jaegerTracer.InitJaeger(cfg.JaegerConfig)
-	if err != nil {
-		logger.Errorf("Shutting down, error while creating tracer %v", err)
-		return
-	}
-	logger.Info("Jaeger connected")
-	defer closer.Close()
-	opentracing.SetGlobalTracer(tracer)
-
-	logger.Info("Metrics initializing")
-	metric, err := metrics.CreateMetrics(cfg.PrometheusConfig.Name)
-	if err != nil {
-		logger.Errorf("Shutting down, error while creating metrics %v", err)
-		return
-	}
-
 	shutdown := make(chan error, 1)
-	go func() {
-		logger.Info("Metrics server running")
-		if err := metrics.RunMetricServer(cfg.PrometheusConfig.ServerConfig); err != nil {
-			logger.Errorf("Shutting down, error while running metrics server %v", err)
-			shutdown <- err
-			return
-		}
-	}()
+	metric, err := initMetrics(cfg, shutdown)
+	if err != nil {
+		return
+	}
 
-	cinemaDB, err := postgresrepository.NewPostgreDB(cfg.DBConfig)
+	cinemaDB, err := postgresrepository.NewPostgreDB(&cfg.DBConfig)
 	if err != nil {
 		logger.Errorf("Shutting down, connection to the database not established %v", err)
 		return
@@ -128,33 +155,26 @@ func main() {
 	defer hallsConfigurationsRdb.Close()
 
 	cinemaCache := rediscache.NewCinemaCache(logger.Logger, citiesCinemas, cinemasRdb, citiesRdb,
-		hallsConfigurationsRdb, hallsRdb)
-	go func() {
-		logger.Info("Healthcheck initializing")
-		healthcheckManager := healthcheck.NewHealthManager(logger.Logger,
-			[]healthcheck.HealthcheckResource{cinemaDB, cinemaCache}, cfg.HealthcheckPort, nil)
-		if err := healthcheckManager.RunHealthcheckEndpoint(); err != nil {
-			logger.Errorf("Shutting down, error while running healthcheck endpoint %s", err.Error())
-			shutdown <- err
-			return
-		}
-	}()
+		hallsConfigurationsRdb, hallsRdb, metric)
 
-	cinemaRepo := postgresrepository.NewCinemaRepository(logger.Logger, cinemaDB)
-	repository := service.NewCinemaRepositoryWrapper(logger.Logger, cinemaRepo, cinemaCache,
-		service.CacheConfig{
+	initHealthcheck(cfg, shutdown, []healthcheck.HealthcheckResource{cinemaDB, cinemaCache})
+
+	repo := postgresrepository.NewCinemaRepository(logger.Logger, cinemaDB)
+	repositoryWithCache := repository.NewcinemaRepositoryWithCache(logger.Logger, repo, cinemaCache,
+		repository.CacheConfig{
 			HallConfigurationTTL: cfg.HallsCache.TTL,
 			CinemasTTL:           cfg.CinemasCache.TTL,
 			CitiesTTL:            cfg.CitiesCache.TTL,
 			HallsTTL:             cfg.HallsCache.TTL,
 			CitiesCinemasTTL:     cfg.CitiesCinemasCache.TTL,
-		}, metric)
+		})
 
-	service := service.NewCinemaService(logger.Logger, repository)
+	s := service.NewCinemaService(repositoryWithCache)
+	h := handler.NewCinemaServiceHandler(s)
 	logger.Info("Server initializing")
-	s := server.NewServer(logger.Logger, service)
+	serv := server.NewServer(logger.Logger, h)
 	go func() {
-		if err := s.Run(getListenServerConfig(cfg), metric, nil, nil); err != nil {
+		if err := serv.Run(getListenServerConfig(cfg), metric, nil, nil); err != nil {
 			logger.Errorf("Shutting down, error while running server %s", err.Error())
 			shutdown <- err
 			return
@@ -171,7 +191,7 @@ func main() {
 		break
 	}
 
-	s.Shutdown()
+	serv.Shutdown()
 }
 
 func getListenServerConfig(cfg *config.Config) server.Config {
@@ -186,7 +206,7 @@ func getListenServerConfig(cfg *config.Config) server.Config {
 				return errors.New("can't convert")
 			}
 
-			return cinema_service.RegisterCinemaServiceV1HandlerServer(context.Background(),
+			return cinema_service.RegisterCinemaServiceV1HandlerServer(ctx,
 				mux, serv)
 		},
 	}

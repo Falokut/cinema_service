@@ -61,14 +61,14 @@ func request_CinemaServiceV1_GetCinemasInCity_0(ctx context.Context, marshaler r
 		_   = err
 	)
 
-	val, ok = pathParams["cityId"]
+	val, ok = pathParams["cityID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cityId")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cityID")
 	}
 
-	protoReq.CityId, err = runtime.Int32(val)
+	protoReq.CityID, err = runtime.Int32(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cityId", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cityID", err)
 	}
 
 	msg, err := client.GetCinemasInCity(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -87,14 +87,14 @@ func local_request_CinemaServiceV1_GetCinemasInCity_0(ctx context.Context, marsh
 		_   = err
 	)
 
-	val, ok = pathParams["cityId"]
+	val, ok = pathParams["cityID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cityId")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cityID")
 	}
 
-	protoReq.CityId, err = runtime.Int32(val)
+	protoReq.CityID, err = runtime.Int32(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cityId", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cityID", err)
 	}
 
 	msg, err := server.GetCinemasInCity(ctx, &protoReq)
@@ -113,14 +113,14 @@ func request_CinemaServiceV1_GetCinema_0(ctx context.Context, marshaler runtime.
 		_   = err
 	)
 
-	val, ok = pathParams["cinemaId"]
+	val, ok = pathParams["cinemaID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cinemaId")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cinemaID")
 	}
 
-	protoReq.CinemaId, err = runtime.Int32(val)
+	protoReq.CinemaID, err = runtime.Int32(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cinemaId", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cinemaID", err)
 	}
 
 	msg, err := client.GetCinema(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -139,14 +139,14 @@ func local_request_CinemaServiceV1_GetCinema_0(ctx context.Context, marshaler ru
 		_   = err
 	)
 
-	val, ok = pathParams["cinemaId"]
+	val, ok = pathParams["cinemaID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cinemaId")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cinemaID")
 	}
 
-	protoReq.CinemaId, err = runtime.Int32(val)
+	protoReq.CinemaID, err = runtime.Int32(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cinemaId", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cinemaID", err)
 	}
 
 	msg, err := server.GetCinema(ctx, &protoReq)
@@ -155,7 +155,7 @@ func local_request_CinemaServiceV1_GetCinema_0(ctx context.Context, marshaler ru
 }
 
 var (
-	filter_CinemaServiceV1_GetScreening_0 = &utilities.DoubleArray{Encoding: map[string]int{"screeningId": 0, "screening_id": 1}, Base: []int{1, 1, 2, 0, 0}, Check: []int{0, 1, 1, 2, 3}}
+	filter_CinemaServiceV1_GetScreening_0 = &utilities.DoubleArray{Encoding: map[string]int{"screeningID": 0, "screening_id": 1}, Base: []int{1, 1, 2, 0, 0}, Check: []int{0, 1, 1, 2, 3}}
 )
 
 func request_CinemaServiceV1_GetScreening_0(ctx context.Context, marshaler runtime.Marshaler, client CinemaServiceV1Client, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
@@ -169,14 +169,14 @@ func request_CinemaServiceV1_GetScreening_0(ctx context.Context, marshaler runti
 		_   = err
 	)
 
-	val, ok = pathParams["screeningId"]
+	val, ok = pathParams["screeningID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "screeningId")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "screeningID")
 	}
 
-	protoReq.ScreeningId, err = runtime.Int64(val)
+	protoReq.ScreeningID, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "screeningId", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "screeningID", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -202,14 +202,14 @@ func local_request_CinemaServiceV1_GetScreening_0(ctx context.Context, marshaler
 		_   = err
 	)
 
-	val, ok = pathParams["screeningId"]
+	val, ok = pathParams["screeningID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "screeningId")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "screeningID")
 	}
 
-	protoReq.ScreeningId, err = runtime.Int64(val)
+	protoReq.ScreeningID, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "screeningId", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "screeningID", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -225,7 +225,7 @@ func local_request_CinemaServiceV1_GetScreening_0(ctx context.Context, marshaler
 }
 
 var (
-	filter_CinemaServiceV1_GetMoviesScreenings_0 = &utilities.DoubleArray{Encoding: map[string]int{"cinemaId": 0, "cinema_id": 1}, Base: []int{1, 1, 2, 0, 0}, Check: []int{0, 1, 1, 2, 3}}
+	filter_CinemaServiceV1_GetMoviesScreenings_0 = &utilities.DoubleArray{Encoding: map[string]int{"cinemaID": 0, "cinema_id": 1}, Base: []int{1, 1, 2, 0, 0}, Check: []int{0, 1, 1, 2, 3}}
 )
 
 func request_CinemaServiceV1_GetMoviesScreenings_0(ctx context.Context, marshaler runtime.Marshaler, client CinemaServiceV1Client, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
@@ -239,14 +239,14 @@ func request_CinemaServiceV1_GetMoviesScreenings_0(ctx context.Context, marshale
 		_   = err
 	)
 
-	val, ok = pathParams["cinemaId"]
+	val, ok = pathParams["cinemaID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cinemaId")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cinemaID")
 	}
 
-	protoReq.CinemaId, err = runtime.Int32(val)
+	protoReq.CinemaID, err = runtime.Int32(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cinemaId", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cinemaID", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -272,14 +272,14 @@ func local_request_CinemaServiceV1_GetMoviesScreenings_0(ctx context.Context, ma
 		_   = err
 	)
 
-	val, ok = pathParams["cinemaId"]
+	val, ok = pathParams["cinemaID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cinemaId")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cinemaID")
 	}
 
-	protoReq.CinemaId, err = runtime.Int32(val)
+	protoReq.CinemaID, err = runtime.Int32(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cinemaId", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cinemaID", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -331,7 +331,7 @@ func local_request_CinemaServiceV1_GetMoviesScreeningsInCities_0(ctx context.Con
 }
 
 var (
-	filter_CinemaServiceV1_GetScreeningsInCity_0 = &utilities.DoubleArray{Encoding: map[string]int{"cityId": 0, "city_id": 1}, Base: []int{1, 1, 2, 0, 0}, Check: []int{0, 1, 1, 2, 3}}
+	filter_CinemaServiceV1_GetScreeningsInCity_0 = &utilities.DoubleArray{Encoding: map[string]int{"cityID": 0, "city_id": 1}, Base: []int{1, 1, 2, 0, 0}, Check: []int{0, 1, 1, 2, 3}}
 )
 
 func request_CinemaServiceV1_GetScreeningsInCity_0(ctx context.Context, marshaler runtime.Marshaler, client CinemaServiceV1Client, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
@@ -345,14 +345,14 @@ func request_CinemaServiceV1_GetScreeningsInCity_0(ctx context.Context, marshale
 		_   = err
 	)
 
-	val, ok = pathParams["cityId"]
+	val, ok = pathParams["cityID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cityId")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cityID")
 	}
 
-	protoReq.CityId, err = runtime.Int32(val)
+	protoReq.CityID, err = runtime.Int32(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cityId", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cityID", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -378,14 +378,14 @@ func local_request_CinemaServiceV1_GetScreeningsInCity_0(ctx context.Context, ma
 		_   = err
 	)
 
-	val, ok = pathParams["cityId"]
+	val, ok = pathParams["cityID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cityId")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cityID")
 	}
 
-	protoReq.CityId, err = runtime.Int32(val)
+	protoReq.CityID, err = runtime.Int32(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cityId", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cityID", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -437,7 +437,7 @@ func local_request_CinemaServiceV1_GetHalls_0(ctx context.Context, marshaler run
 }
 
 var (
-	filter_CinemaServiceV1_GetScreenings_0 = &utilities.DoubleArray{Encoding: map[string]int{"cinemaId": 0, "cinema_id": 1}, Base: []int{1, 1, 2, 0, 0}, Check: []int{0, 1, 1, 2, 3}}
+	filter_CinemaServiceV1_GetScreenings_0 = &utilities.DoubleArray{Encoding: map[string]int{"cinemaID": 0, "cinema_id": 1}, Base: []int{1, 1, 2, 0, 0}, Check: []int{0, 1, 1, 2, 3}}
 )
 
 func request_CinemaServiceV1_GetScreenings_0(ctx context.Context, marshaler runtime.Marshaler, client CinemaServiceV1Client, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
@@ -451,14 +451,14 @@ func request_CinemaServiceV1_GetScreenings_0(ctx context.Context, marshaler runt
 		_   = err
 	)
 
-	val, ok = pathParams["cinemaId"]
+	val, ok = pathParams["cinemaID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cinemaId")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cinemaID")
 	}
 
-	protoReq.CinemaId, err = runtime.Int32(val)
+	protoReq.CinemaID, err = runtime.Int32(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cinemaId", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cinemaID", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -484,14 +484,14 @@ func local_request_CinemaServiceV1_GetScreenings_0(ctx context.Context, marshale
 		_   = err
 	)
 
-	val, ok = pathParams["cinemaId"]
+	val, ok = pathParams["cinemaID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cinemaId")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cinemaID")
 	}
 
-	protoReq.CinemaId, err = runtime.Int32(val)
+	protoReq.CinemaID, err = runtime.Int32(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cinemaId", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cinemaID", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -517,14 +517,14 @@ func request_CinemaServiceV1_GetHallConfiguration_0(ctx context.Context, marshal
 		_   = err
 	)
 
-	val, ok = pathParams["hallId"]
+	val, ok = pathParams["hallID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "hallId")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "hallID")
 	}
 
-	protoReq.HallId, err = runtime.Int32(val)
+	protoReq.HallID, err = runtime.Int32(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "hallId", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "hallID", err)
 	}
 
 	msg, err := client.GetHallConfiguration(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -543,14 +543,14 @@ func local_request_CinemaServiceV1_GetHallConfiguration_0(ctx context.Context, m
 		_   = err
 	)
 
-	val, ok = pathParams["hallId"]
+	val, ok = pathParams["hallID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "hallId")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "hallID")
 	}
 
-	protoReq.HallId, err = runtime.Int32(val)
+	protoReq.HallID, err = runtime.Int32(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "hallId", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "hallID", err)
 	}
 
 	msg, err := server.GetHallConfiguration(ctx, &protoReq)
@@ -597,7 +597,7 @@ func RegisterCinemaServiceV1HandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetCinemasInCity", runtime.WithHTTPPathPattern("/v1/cities/{cityId}/cinemas"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetCinemasInCity", runtime.WithHTTPPathPattern("/v1/cities/{cityID}/cinemas"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -622,7 +622,7 @@ func RegisterCinemaServiceV1HandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetCinema", runtime.WithHTTPPathPattern("/v1/cinema/{cinemaId}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetCinema", runtime.WithHTTPPathPattern("/v1/cinema/{cinemaID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -647,7 +647,7 @@ func RegisterCinemaServiceV1HandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetScreening", runtime.WithHTTPPathPattern("/v1/screening/{screeningId}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetScreening", runtime.WithHTTPPathPattern("/v1/screening/{screeningID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -672,7 +672,7 @@ func RegisterCinemaServiceV1HandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetMoviesScreenings", runtime.WithHTTPPathPattern("/v1/cinema/{cinemaId}/screenings/movies"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetMoviesScreenings", runtime.WithHTTPPathPattern("/v1/cinema/{cinemaID}/screenings/movies"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -722,7 +722,7 @@ func RegisterCinemaServiceV1HandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetScreeningsInCity", runtime.WithHTTPPathPattern("/v1/city/{cityId}/screenings"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetScreeningsInCity", runtime.WithHTTPPathPattern("/v1/city/{cityID}/screenings"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -772,7 +772,7 @@ func RegisterCinemaServiceV1HandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetScreenings", runtime.WithHTTPPathPattern("/v1/cinema/{cinemaId}/screenings"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetScreenings", runtime.WithHTTPPathPattern("/v1/cinema/{cinemaID}/screenings"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -797,7 +797,7 @@ func RegisterCinemaServiceV1HandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetHallConfiguration", runtime.WithHTTPPathPattern("/v1/hall/{hallId}/configuration"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetHallConfiguration", runtime.WithHTTPPathPattern("/v1/hall/{hallID}/configuration"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -883,7 +883,7 @@ func RegisterCinemaServiceV1HandlerClient(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetCinemasInCity", runtime.WithHTTPPathPattern("/v1/cities/{cityId}/cinemas"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetCinemasInCity", runtime.WithHTTPPathPattern("/v1/cities/{cityID}/cinemas"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -905,7 +905,7 @@ func RegisterCinemaServiceV1HandlerClient(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetCinema", runtime.WithHTTPPathPattern("/v1/cinema/{cinemaId}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetCinema", runtime.WithHTTPPathPattern("/v1/cinema/{cinemaID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -927,7 +927,7 @@ func RegisterCinemaServiceV1HandlerClient(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetScreening", runtime.WithHTTPPathPattern("/v1/screening/{screeningId}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetScreening", runtime.WithHTTPPathPattern("/v1/screening/{screeningID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -949,7 +949,7 @@ func RegisterCinemaServiceV1HandlerClient(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetMoviesScreenings", runtime.WithHTTPPathPattern("/v1/cinema/{cinemaId}/screenings/movies"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetMoviesScreenings", runtime.WithHTTPPathPattern("/v1/cinema/{cinemaID}/screenings/movies"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -993,7 +993,7 @@ func RegisterCinemaServiceV1HandlerClient(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetScreeningsInCity", runtime.WithHTTPPathPattern("/v1/city/{cityId}/screenings"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetScreeningsInCity", runtime.WithHTTPPathPattern("/v1/city/{cityID}/screenings"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1037,7 +1037,7 @@ func RegisterCinemaServiceV1HandlerClient(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetScreenings", runtime.WithHTTPPathPattern("/v1/cinema/{cinemaId}/screenings"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetScreenings", runtime.WithHTTPPathPattern("/v1/cinema/{cinemaID}/screenings"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1059,7 +1059,7 @@ func RegisterCinemaServiceV1HandlerClient(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetHallConfiguration", runtime.WithHTTPPathPattern("/v1/hall/{hallId}/configuration"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/cinema_service.CinemaServiceV1/GetHallConfiguration", runtime.WithHTTPPathPattern("/v1/hall/{hallID}/configuration"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1081,23 +1081,23 @@ func RegisterCinemaServiceV1HandlerClient(ctx context.Context, mux *runtime.Serv
 var (
 	pattern_CinemaServiceV1_GetCinemasCities_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "cities"}, ""))
 
-	pattern_CinemaServiceV1_GetCinemasInCity_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "cities", "cityId", "cinemas"}, ""))
+	pattern_CinemaServiceV1_GetCinemasInCity_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "cities", "cityID", "cinemas"}, ""))
 
-	pattern_CinemaServiceV1_GetCinema_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "cinema", "cinemaId"}, ""))
+	pattern_CinemaServiceV1_GetCinema_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "cinema", "cinemaID"}, ""))
 
-	pattern_CinemaServiceV1_GetScreening_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "screening", "screeningId"}, ""))
+	pattern_CinemaServiceV1_GetScreening_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "screening", "screeningID"}, ""))
 
-	pattern_CinemaServiceV1_GetMoviesScreenings_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 2, 4}, []string{"v1", "cinema", "cinemaId", "screenings", "movies"}, ""))
+	pattern_CinemaServiceV1_GetMoviesScreenings_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 2, 4}, []string{"v1", "cinema", "cinemaID", "screenings", "movies"}, ""))
 
 	pattern_CinemaServiceV1_GetMoviesScreeningsInCities_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "screenings", "movies"}, ""))
 
-	pattern_CinemaServiceV1_GetScreeningsInCity_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "city", "cityId", "screenings"}, ""))
+	pattern_CinemaServiceV1_GetScreeningsInCity_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "city", "cityID", "screenings"}, ""))
 
 	pattern_CinemaServiceV1_GetHalls_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "halls"}, ""))
 
-	pattern_CinemaServiceV1_GetScreenings_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "cinema", "cinemaId", "screenings"}, ""))
+	pattern_CinemaServiceV1_GetScreenings_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "cinema", "cinemaID", "screenings"}, ""))
 
-	pattern_CinemaServiceV1_GetHallConfiguration_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "hall", "hallId", "configuration"}, ""))
+	pattern_CinemaServiceV1_GetHallConfiguration_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "hall", "hallID", "configuration"}, ""))
 )
 
 var (

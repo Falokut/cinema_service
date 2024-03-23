@@ -8,6 +8,11 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+type Metrics interface {
+	IncCacheHits(method string, times int)
+	IncCacheMiss(method string, times int)
+}
+
 func NewRedisCache(opt *redis.Options) (*redis.Client, error) {
 	rdb := redis.NewClient(opt)
 	if rdb == nil {

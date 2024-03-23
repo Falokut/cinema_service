@@ -24,7 +24,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/cinema/{cinemaId}": {
+    "/v1/cinema/{cinemaID}": {
       "get": {
         "summary": "Returns cinema with specified id.",
         "operationId": "cinemaServiceV1_GetCinema",
@@ -56,7 +56,7 @@
         },
         "parameters": [
           {
-            "name": "cinemaId",
+            "name": "cinemaID",
             "in": "path",
             "required": true,
             "type": "integer",

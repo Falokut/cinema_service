@@ -6,10 +6,10 @@ networks:
   cinema_service_network:
     name: "cinema_service_net"
     driver: bridge
-
 services:
   cinema_service:
-    build: ./
+    build:
+      dockerfile: alpine.Dockerfile
     command: ./bin/app
     volumes:
       - ./docker/containers-configs/:/configs

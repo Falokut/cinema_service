@@ -3,11 +3,11 @@ package rediscache
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
 	"github.com/Falokut/cinema_service/internal/models"
-	"github.com/opentracing/opentracing-go"
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/exp/maps"
@@ -20,9 +20,16 @@ type CinemaCache struct {
 	hallsConfigurationsRdb *redis.Client
 	hallsRdb               *redis.Client
 	cinemasRdb             *redis.Client
+	metrics                Metrics
 }
 
-func NewCinemaCache(logger *logrus.Logger, cinemasCitiesRdb, cinemasRdb, citiesRdb, hallsConfigurationsRdb, hallsRdb *redis.Client) *CinemaCache {
+func NewCinemaCache(logger *logrus.Logger,
+	cinemasCitiesRdb,
+	cinemasRdb,
+	citiesRdb,
+	hallsConfigurationsRdb,
+	hallsRdb *redis.Client,
+	metrics Metrics) *CinemaCache {
 	return &CinemaCache{
 		logger:                 logger,
 		citiesCinemasRdb:       cinemasCitiesRdb,
@@ -30,6 +37,7 @@ func NewCinemaCache(logger *logrus.Logger, cinemasCitiesRdb, cinemasRdb, citiesR
 		citiesRdb:              citiesRdb,
 		hallsConfigurationsRdb: hallsConfigurationsRdb,
 		hallsRdb:               hallsRdb,
+		metrics:                metrics,
 	}
 }
 
@@ -52,31 +60,26 @@ func (c *CinemaCache) PingContext(ctx context.Context) error {
 	return nil
 }
 
-func (c *CinemaCache) GetCinema(ctx context.Context, id int32) (models.Cinema, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaCacheGetCinema")
-	defer span.Finish()
-	var err error
-	defer span.SetTag("error", err != nil)
-
+func (c *CinemaCache) GetCinema(ctx context.Context, id int32) (cinema models.Cinema, err error) {
+	defer c.updateMetrics(&err, "GetCinema")
+	defer handleError(ctx, &err)
+	defer c.logError(&err, "GetCinema")
 	data, err := c.cinemasRdb.Get(ctx, fmt.Sprint(id)).Bytes()
 	if err != nil {
-		return models.Cinema{}, err
+		return
 	}
-	var cinema models.Cinema
+
 	err = json.Unmarshal(data, &cinema)
 	if err != nil {
-		c.logger.Errorf("error while unmarchalling cinema %s", err.Error())
-		return models.Cinema{}, err
+		return
 	}
 
 	return cinema, nil
 }
 
-func (c *CinemaCache) CacheCinema(ctx context.Context, cinema models.Cinema, ttl time.Duration) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaCache.CacheCinema")
-	defer span.Finish()
-	var err error
-	defer span.SetTag("error", err != nil)
+func (c *CinemaCache) CacheCinema(ctx context.Context, cinema models.Cinema, ttl time.Duration) (err error) {
+	defer handleError(ctx, &err)
+	defer c.logError(&err, "CacheCinema")
 	data, err := json.Marshal(cinema)
 	if err != nil {
 		return err
@@ -86,54 +89,44 @@ func (c *CinemaCache) CacheCinema(ctx context.Context, cinema models.Cinema, ttl
 	return err
 }
 
-func (c *CinemaCache) GetCinemasInCity(ctx context.Context, id int32) ([]models.Cinema, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaCache.GetCinemasInCity")
-	defer span.Finish()
-	var err error
-	defer span.SetTag("error", err != nil)
-
-	data, err := c.citiesCinemasRdb.Get(ctx, fmt.Sprint(id)).Bytes()
+func (c *CinemaCache) GetCinemasInCity(ctx context.Context, cityID int32) (cinemas []models.Cinema, err error) {
+	defer c.updateMetrics(&err, "GetCinemasInCity")
+	defer handleError(ctx, &err)
+	defer c.logError(&err, "GetCinemasInCity")
+	data, err := c.citiesCinemasRdb.Get(ctx, fmt.Sprint(cityID)).Bytes()
 	if err != nil {
-		c.logger.Errorf("error while getting cinemas in city %s", err.Error())
-		return []models.Cinema{}, err
+		return
 	}
 
-	var cinemas []models.Cinema
 	err = json.Unmarshal(data, &cinemas)
 	if err != nil {
-		c.logger.Errorf("error while unmarchalling cinemas in city %s", err.Error())
-		return []models.Cinema{}, err
+		return
 	}
 
 	return cinemas, nil
 }
 
-func (c *CinemaCache) GetCinemasCities(ctx context.Context) ([]models.City, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaCache.CacheCinemasInCity")
-	defer span.Finish()
-	var err error
-	defer span.SetTag("error", err != nil)
-
+func (c *CinemaCache) GetCinemasCities(ctx context.Context) (cities []models.City, err error) {
+	defer c.updateMetrics(&err, "GetCinemasCities")
+	defer handleError(ctx, &err)
+	defer c.logError(&err, "GetCinemasCities")
 	var keys []string
-	c.citiesRdb.Keys(ctx, "*").ScanSlice(&keys)
+	err = c.citiesRdb.Keys(ctx, "*").ScanSlice(&keys)
 	if err != nil {
-		c.logger.Errorf("error while getting cinemas cities keys %s", err.Error())
-		return []models.City{}, err
+		return
 	}
 
 	redisData, err := c.citiesRdb.MGet(ctx, keys...).Result()
 	if err != nil {
-		c.logger.Errorf("error while getting cinemas cities %s", err.Error())
-		return []models.City{}, err
+		return
 	}
 
-	var cities = make([]models.City, 0, len(redisData))
+	cities = make([]models.City, 0, len(redisData))
 	for _, data := range redisData {
 		var city models.City
 		err = json.Unmarshal([]byte(data.(string)), &city)
 		if err != nil {
-			c.logger.Errorf("error while unmarchalling cinemas in city %s", err.Error())
-			return []models.City{}, err
+			return
 		}
 
 		cities = append(cities, city)
@@ -142,100 +135,86 @@ func (c *CinemaCache) GetCinemasCities(ctx context.Context) ([]models.City, erro
 	return cities, nil
 }
 
-func (c *CinemaCache) GetHallConfiguraion(ctx context.Context, id int32) ([]models.Place, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaCache.GetCinemasInCity")
-	defer span.Finish()
-	var err error
-	defer span.SetTag("error", err != nil)
-
+func (c *CinemaCache) GetHallConfiguraion(ctx context.Context, id int32) (places []models.Place, err error) {
+	defer c.updateMetrics(&err, "GetHallConfiguraion")
+	defer handleError(ctx, &err)
+	defer c.logError(&err, "GetHallConfiguraion")
 	data, err := c.hallsConfigurationsRdb.Get(ctx, fmt.Sprint(id)).Bytes()
 	if err != nil {
-		c.logger.Errorf("error while getting places %s", err.Error())
-		return []models.Place{}, err
+		return
 	}
 
-	var places []models.Place
 	err = json.Unmarshal(data, &places)
 	if err != nil {
-		c.logger.Errorf("error while unmarchalling places %s", err.Error())
-		return []models.Place{}, err
+		return
 	}
 
 	return places, nil
 }
 
-func (c *CinemaCache) CacheCinemasInCity(ctx context.Context, id int32, cinemas []models.Cinema, ttl time.Duration) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaCache.CacheCinemasInCity")
-	defer span.Finish()
-	var err error
-	defer span.SetTag("error", err != nil)
-
+func (c *CinemaCache) CacheCinemasInCity(ctx context.Context, id int32, cinemas []models.Cinema, ttl time.Duration) (err error) {
+	defer handleError(ctx, &err)
+	defer c.logError(&err, "CacheCinemasInCity")
 	data, err := json.Marshal(cinemas)
 	if err != nil {
-		return err
+		return
 	}
 
 	err = c.citiesCinemasRdb.Set(ctx, fmt.Sprint(id), data, ttl).Err()
-	return err
+	return
 }
 
-func (c *CinemaCache) CacheCinemasCities(ctx context.Context, cities []models.City, ttl time.Duration) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaCache.CacheCinemasCities")
-	defer span.Finish()
-	var err error
-	defer span.SetTag("error", err != nil)
-
+func (c *CinemaCache) CacheCinemasCities(ctx context.Context, cities []models.City, ttl time.Duration) (err error) {
+	defer handleError(ctx, &err)
+	defer c.logError(&err, "CacheCinemasCities")
 	tx := c.citiesRdb.Pipeline()
 	for _, city := range cities {
-		toCache, err := json.Marshal(city)
-		if err != nil {
-			return err
+		toCache, merr := json.Marshal(city)
+		if merr != nil {
+			err = merr
+			return
 		}
 		tx.Set(ctx, fmt.Sprint(city.ID), toCache, ttl)
 	}
 	_, err = tx.Exec(ctx)
-	return err
+	return
 }
 
-func (c *CinemaCache) CacheHallConfiguraion(ctx context.Context, id int32, places []models.Place, ttl time.Duration) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaCache.CacheHallConfiguraion")
-	defer span.Finish()
-	var err error
-	defer span.SetTag("error", err != nil)
-
+func (c *CinemaCache) CacheHallConfiguraion(ctx context.Context, id int32, places []models.Place, ttl time.Duration) (err error) {
+	defer handleError(ctx, &err)
+	defer c.logError(&err, "CacheHallConfiguraion")
 	toCache, err := json.Marshal(places)
 	if err != nil {
-		return err
+		return
 	}
 
 	err = c.hallsConfigurationsRdb.Set(ctx, fmt.Sprint(id), toCache, ttl).Err()
-	return err
+	return
 }
 
-func (c *CinemaCache) CacheHalls(ctx context.Context, halls []models.Hall, ttl time.Duration) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaCache.CacheHalls")
-	defer span.Finish()
-	var err error
-	defer span.SetTag("error", err != nil)
-
+func (c *CinemaCache) CacheHalls(ctx context.Context, halls []models.Hall, ttl time.Duration) (err error) {
+	defer handleError(ctx, &err)
+	defer c.logError(&err, "CacheHalls")
 	tx := c.hallsRdb.Pipeline()
 	for _, hall := range halls {
-		toCache, err := json.Marshal(hall)
-		if err != nil {
-			return err
+		toCache, merr := json.Marshal(hall)
+		if merr != nil {
+			err = merr
+			return
 		}
-		tx.Set(ctx, fmt.Sprint(hall.Id), toCache, ttl)
+		err = tx.Set(ctx, fmt.Sprint(hall.ID), toCache, ttl).Err()
+		if err != nil {
+			return
+		}
 	}
 	_, err = tx.Exec(ctx)
-	return err
+	return
 }
 
-func (c *CinemaCache) GetHalls(ctx context.Context, ids []int32) ([]models.Hall, []int32, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "CinemaCache.GetHalls")
-	defer span.Finish()
-	var err error
-	defer span.SetTag("error", err != nil)
-
+func (c *CinemaCache) GetHalls(ctx context.Context, ids []int32) (halls []models.Hall, notFoundedIds []int32, err error) {
+	defer c.updateMetrics(&err, "GetHalls")
+	defer handleError(ctx, &err)
+	defer c.logError(&err, "GetHalls")
 	keys := make([]string, len(ids))
 	hallsIds := make(map[int32]struct{}, len(ids))
 	for i, id := range ids {
@@ -243,13 +222,13 @@ func (c *CinemaCache) GetHalls(ctx context.Context, ids []int32) ([]models.Hall,
 		hallsIds[id] = struct{}{}
 	}
 
-	halls, err := c.hallsRdb.MGet(ctx, keys...).Result()
+	hallsBody, err := c.hallsRdb.MGet(ctx, keys...).Result()
 	if err != nil {
-		return []models.Hall{}, []int32{}, err
+		return
 	}
 
-	var cachedHalls = make([]models.Hall, 0, len(halls))
-	for _, cached := range halls {
+	halls = make([]models.Hall, 0, len(hallsBody))
+	for _, cached := range hallsBody {
 		if cached == nil {
 			continue
 		}
@@ -257,11 +236,77 @@ func (c *CinemaCache) GetHalls(ctx context.Context, ids []int32) ([]models.Hall,
 		hall := models.Hall{}
 		err = json.Unmarshal([]byte(cached.(string)), &hall)
 		if err != nil {
-			return []models.Hall{}, []int32{}, err
+			return
 		}
-		delete(hallsIds, hall.Id)
-		cachedHalls = append(cachedHalls, hall)
+		delete(hallsIds, hall.ID)
+		halls = append(halls, hall)
 	}
 
-	return cachedHalls, maps.Keys(hallsIds), nil
+	return halls, maps.Keys(hallsIds), nil
+}
+
+func (c *CinemaCache) logError(errptr *error, functionName string) {
+	if errptr == nil || *errptr == nil {
+		return
+	}
+
+	err := *errptr
+	var repoErr = &models.ServiceError{}
+	if errors.As(err, &repoErr) {
+		c.logger.WithFields(
+			logrus.Fields{
+				"error.function.name": functionName,
+				"error.msg":           repoErr.Msg,
+				"error.code":          repoErr.Code,
+			},
+		).Error("casts cache error occurred")
+	} else {
+		c.logger.WithFields(
+			logrus.Fields{
+				"error.function.name": functionName,
+				"error.msg":           err.Error(),
+			},
+		).Error("casts cache error occurred")
+	}
+}
+
+func handleError(ctx context.Context, err *error) {
+	if ctx.Err() != nil {
+		var code models.ErrorCode
+		switch {
+		case errors.Is(ctx.Err(), context.Canceled):
+			code = models.Canceled
+		case errors.Is(ctx.Err(), context.DeadlineExceeded):
+			code = models.DeadlineExceeded
+		}
+		*err = models.Error(code, ctx.Err().Error())
+		return
+	}
+
+	if err == nil || *err == nil {
+		return
+	}
+
+	var repoErr = &models.ServiceError{}
+	if !errors.As(*err, &repoErr) {
+		var code models.ErrorCode
+		switch {
+		case errors.Is(*err, redis.Nil):
+			code = models.NotFound
+			*err = models.Error(code, "entity not found")
+		default:
+			code = models.Internal
+			*err = models.Error(code, "cache internal error")
+		}
+	}
+}
+
+func (c *CinemaCache) updateMetrics(err *error, functionName string) {
+	if err == nil || *err == nil {
+		c.metrics.IncCacheHits(functionName, 1)
+		return
+	}
+	if models.Code(*err) == models.NotFound {
+		c.metrics.IncCacheMiss(functionName, 1)
+	}
 }

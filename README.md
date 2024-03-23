@@ -1,3 +1,11 @@
+# Cinema service
+[![Go Report Card](https://goreportcard.com/badge/github.com/Falokut/cinema_service)](https://goreportcard.com/report/github.com/Falokut/cinema_service)
+[![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white&style=flat-square)](https://pkg.go.dev/github.com/Falokut/cinema_service)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/Falokut/cinema_service)
+[![Go](https://github.com/Falokut/cinema_service/actions/workflows/go.yml/badge.svg?branch=master)](https://github.com/Falokut/cinema_service/actions/workflows/go.yml) ![](https://changkun.de/urlstat?mode=github&repo=Falokut/cinema_service)
+[![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
+---
+
 # Content
 
 + [Configuration](#configuration)

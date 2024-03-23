@@ -12,7 +12,7 @@ type GeoPoint struct {
 	Latityde, Longitude float64
 }
 
-func (p *GeoPoint) Scan(v interface{}) error {
+func (p *GeoPoint) Scan(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return errors.New("unsupported value type")

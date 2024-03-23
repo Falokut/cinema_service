@@ -11,7 +11,7 @@ import "google/protobuf/empty.proto";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     schemes: HTTP;
-    // schemes: HTTPS;
+    schemes: HTTPS;
     consumes: "application/json";
     produces: "application/json";
 
@@ -65,27 +65,14 @@ service cinemaServiceV1 {
     // Returns cinemas in the city.
     rpc GetCinemasInCity(GetCinemasInCityRequest) returns(Cinemas){
         option (google.api.http) = {
-            get: "/v1/cities/{cityId}/cinemas"
-        };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            responses: {
-                key: "404"
-                value: {
-                    description: "Returned when no cinema in specified city found.";
-                    schema: {
-                        json_schema: {
-                            ref: "#/definitions/googlerpcStatus";
-                        }
-                    }
-                }
-            };
+            get: "/v1/cities/{cityID}/cinemas"
         };
     }
 
     // Returns cinema with specified id.
     rpc GetCinema(GetCinemaRequest) returns(Cinema){
         option (google.api.http) = {
-            get: "/v1/cinema/{cinemaId}"
+            get: "/v1/cinema/{cinemaID}"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             responses: {
@@ -105,7 +92,7 @@ service cinemaServiceV1 {
     // Returns info about screening.
     rpc GetScreening(GetScreeningRequest) returns(GetScreeningResponse) {
         option (google.api.http) = {
-            get: "/v1/screening/{screeningId}"
+            get: "/v1/screening/{screeningID}"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             responses: {
@@ -136,19 +123,13 @@ service cinemaServiceV1 {
     // Returns all movies that are in the cinema screenings in a particular cinema.
     rpc GetMoviesScreenings(GetMoviesScreeningsRequest) returns(PreviewScreenings){
         option (google.api.http) = {
-            get: "/v1/cinema/{cinemaId}/screenings/movies"
+            get: "/v1/cinema/{cinemaID}/screenings/movies"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             responses: {
                 key: "400"
                     value: {
                         description: "Returned when specified start_period or end_period is not valid."
-                    }
-            };
-            responses: {
-                key: "404"
-                    value: {
-                        description: "Returned when no movies screenings were found in specified cinema during the specified period."
                     }
             };
         };
@@ -166,31 +147,19 @@ service cinemaServiceV1 {
                         description: "Returned when specified start_period or end_period or cities_ids is not valid."
                     }
             };
-            responses: {
-                key: "404"
-                    value: {
-                        description: "Returned when no movies screenings were found in specified city during the specified period."
-                    }
-            };
         };
     }
 
     // Returns screenings in the cinema screenings in specified city with specified movie_id.
     rpc GetScreeningsInCity(GetScreeningsInCityRequest) returns(CityScreenings){
         option (google.api.http) = {
-            get: "/v1/city/{cityId}/screenings"
+            get: "/v1/city/{cityID}/screenings"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             responses: {
                 key: "400"
                     value: {
                         description: "Returned when specified start_period or end_period is not valid."
-                    }
-            };
-            responses: {
-                key: "404"
-                    value: {
-                        description: "Returned when no screenings were found in specified city during the specified period."
                     }
             };
         };
@@ -206,7 +175,7 @@ service cinemaServiceV1 {
     //Returns all screenings for a movie in a specific cinema.
     rpc GetScreenings(GetScreeningsRequest) returns(Screenings){
         option (google.api.http) = {
-            get: "/v1/cinema/{cinemaId}/screenings"
+            get: "/v1/cinema/{cinemaID}/screenings"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             responses: {
@@ -215,19 +184,13 @@ service cinemaServiceV1 {
                         description: "Returned when specified start_period or end_period is not valid."
                     }
             };
-            responses: {
-                key: "404"
-                    value: {
-                        description: "Returned when no screenings with specified movie_id were found in specified cinema during the specified period."
-                    }
-            };
         };
     }
 
     // Returns the configuration of the hall.
     rpc GetHallConfiguration(GetHallConfigurationRequest) returns(HallConfiguration) {
         option (google.api.http) = {
-            get: "/v1/hall/{hallId}/configuration"
+            get: "/v1/hall/{hallID}/configuration"
         };
 
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
