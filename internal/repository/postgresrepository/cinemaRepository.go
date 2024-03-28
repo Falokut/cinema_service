@@ -39,10 +39,11 @@ const (
 func (r *CinemaRepository) GetCinemasInCity(ctx context.Context, id int32) (cinemas []models.Cinema, err error) {
 	defer r.handleError(ctx, &err, "GetCinemasInCity")
 
-	query := fmt.Sprintf(`SELECT id,name,address, ST_AsText(coordinates) AS coordinates
-								FROM %s
-								WHERE city_id=$1
-								ORDER BY id`,
+	query := fmt.Sprintf(`
+	SELECT id, name, address, ST_AsText(coordinates) AS coordinates
+	FROM %s
+	WHERE city_id=$1
+	ORDER BY id`,
 		cinemasTableName)
 
 	err = r.db.SelectContext(ctx, &cinemas, query, id)
@@ -52,7 +53,9 @@ func (r *CinemaRepository) GetCinemasInCity(ctx context.Context, id int32) (cine
 func (r *CinemaRepository) GetCinemasCities(ctx context.Context) (cities []models.City, err error) {
 	defer r.handleError(ctx, &err, "GetCinemasCities")
 
-	query := fmt.Sprintf("SELECT * FROM %s WHERE id=ANY(SELECT DISTINCT city_id FROM %s) ORDER BY id",
+	// query to select all cities where there are cinemas.
+	// In some cases, there may be a database record for a city that does not have any cinemas.
+	query := fmt.Sprintf("SELECT id,name FROM %[1]s WHERE id=ANY(SELECT DISTINCT city_id FROM %[2]s) ORDER BY id",
 		citiesTableName, cinemasTableName)
 
 	err = r.db.SelectContext(ctx, &cities, query)
@@ -69,10 +72,13 @@ func (r *CinemaRepository) GetMoviesScreenings(ctx context.Context,
 	cinemaID int32, startPeriod, endPeriod time.Time) (screenings []models.MoviesScreenings, err error) {
 	defer r.handleError(ctx, &err, "GetMoviesScreenings")
 
-	query := fmt.Sprintf(`SELECT movie_id, ARRAY_AGG(DISTINCT %[1]s.name) AS screenings_types,
+	query := fmt.Sprintf(`
+		SELECT movie_id,
+		ARRAY_AGG(DISTINCT %[1]s.name) AS screenings_types,
 		ARRAY_AGG(DISTINCT %[2]s.name) AS halls_types 
-		FROM %[3]s JOIN %[1]s ON screening_type_id=%[1]s.id 
-		JOIN %[4]s ON hall_id=%[4]s.id JOIN %[2]s ON hall_type_id=%[2]s.type_id 
+		FROM %[3]s
+		JOIN %[1]s ON screening_type_id = %[1]s.id 
+		JOIN %[4]s ON hall_id=%[4]s.id JOIN %[2]s ON hall_type_id = %[2]s.type_id 
 		WHERE cinema_id=$1 AND start_time>=$2 AND start_time<=$3 
 		GROUP BY movie_id`,
 		screeningTypeTableName, hallsTypesTableName, screeningsTableName, hallsTableName)
@@ -99,10 +105,14 @@ func (r *CinemaRepository) GetAllMoviesScreenings(ctx context.Context,
 	startPeriod, endPeriod time.Time) (screenings []models.MoviesScreenings, err error) {
 	defer r.handleError(ctx, &err, "GetMoviesScreeningsInCities")
 
-	query := fmt.Sprintf(`SELECT movie_id, ARRAY_AGG(DISTINCT %[1]s.name) AS screenings_types,
+	query := fmt.Sprintf(`
+		SELECT movie_id, 
+		ARRAY_AGG(DISTINCT %[1]s.name) AS screenings_types,
 		ARRAY_AGG(DISTINCT %[2]s.name) AS halls_types 
-		FROM %[3]s JOIN %[1]s ON screening_type_id=%[1]s.id 
-		JOIN %[4]s ON hall_id=%[4]s.id JOIN %[2]s ON hall_type_id=%[2]s.type_id 
+		FROM %[3]s 
+		JOIN %[1]s ON screening_type_id=%[1]s.id 
+		JOIN %[4]s ON hall_id=%[4]s.id 
+		JOIN %[2]s ON hall_type_id=%[2]s.type_id 
 		WHERE start_time>=$1 AND start_time<=$2 
 		GROUP BY movie_id`,
 		screeningTypeTableName, hallsTypesTableName, screeningsTableName, hallsTableName)
@@ -129,10 +139,14 @@ func (r *CinemaRepository) GetMoviesScreeningsInCities(ctx context.Context,
 	citiesIDs []int32, startPeriod, endPeriod time.Time) (screenings []models.MoviesScreenings, err error) {
 	defer r.handleError(ctx, &err, "GetMoviesScreeningsInCities")
 
-	query := fmt.Sprintf(`SELECT movie_id, ARRAY_AGG(DISTINCT %[1]s.name) AS screenings_types,
+	query := fmt.Sprintf(`
+		SELECT movie_id,
+		ARRAY_AGG(DISTINCT %[1]s.name) AS screenings_types,
 		ARRAY_AGG(DISTINCT %[2]s.name) AS halls_types 
-		FROM %[3]s JOIN %[1]s ON screening_type_id=%[1]s.id 
-		JOIN %[4]s ON hall_id=%[4]s.id JOIN %[2]s ON hall_type_id=%[2]s.type_id 
+		FROM %[3]s 
+		JOIN %[1]s ON screening_type_id=%[1]s.id 
+		JOIN %[4]s ON hall_id=%[4]s.id 
+		JOIN %[2]s ON hall_type_id=%[2]s.type_id 
 		WHERE cinema_id=ANY(SELECT id FROM %[5]s WHERE city_id=ANY($1)) AND start_time>=$2 AND start_time<=$3 
 		GROUP BY movie_id`,
 		screeningTypeTableName, hallsTypesTableName, screeningsTableName, hallsTableName, cinemasTableName)
@@ -190,8 +204,9 @@ func (r *CinemaRepository) GetScreenings(ctx context.Context,
 func (r *CinemaRepository) GetScreening(ctx context.Context, id int64) (screening models.Screening, err error) {
 	defer r.handleError(ctx, &err, "GetScreening")
 	query := fmt.Sprintf(`
-	SELECT  %[2]s.name AS screening_type,hall_id,ticket_price,start_time,cinema_id,movie_id 
-	FROM %[1]s JOIN %[2]s ON screening_type_id=%[2]s.id 
+	SELECT  %[2]s.name AS screening_type, hall_id, ticket_price, start_time, cinema_id, movie_id 
+	FROM %[1]s 
+	JOIN %[2]s ON screening_type_id=%[2]s.id 
 	JOIN %[3]s ON hall_id = %[3]s.id 
 	WHERE %[1]s.id=$1;`, screeningsTableName, screeningTypeTableName, hallsTableName)
 
@@ -212,8 +227,10 @@ func (r *CinemaRepository) GetCinema(ctx context.Context, id int32) (cinema mode
 func (r *CinemaRepository) GetHalls(ctx context.Context, ids []int32) (halls []models.Hall, err error) {
 	defer r.handleError(ctx, &err, "GetHalls")
 
-	query := fmt.Sprintf(`SELECT id, COALESCE(%[1]s.name,'') AS hall_type, %[2]s.name AS name, hall_size AS size
-	FROM %[2]s LEFT JOIN %[1]s ON hall_type_id=type_id
+	query := fmt.Sprintf(`
+	SELECT id, COALESCE(%[1]s.name,'') AS hall_type, %[2]s.name AS name, hall_size AS size 
+	FROM %[2]s 
+	LEFT JOIN %[1]s ON hall_type_id=type_id
 	WHERE id=ANY($1)`, hallsTypesTableName, hallsTableName)
 	err = r.db.SelectContext(ctx, &halls, query, ids)
 	return

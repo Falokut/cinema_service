@@ -128,8 +128,8 @@ message Place {
 
 message GetScreeningRequest {
   int64 screeningID = 1[json_name="screening_id"];
-    // Fields to return, valid array values is GetScreeningResponse fields names, leave it empty if you want get all fields
-    google.protobuf.FieldMask mask = 2;
+  // Fields to return, valid array values is GetScreeningResponse fields names, leave it empty if you want get all fields
+  google.protobuf.FieldMask mask = 2;
 }
 
 message GetScreeningResponse {
